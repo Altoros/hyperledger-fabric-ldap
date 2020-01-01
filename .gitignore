@@ -1,0 +1,9 @@
+.idea
+/artifacts
+/docker-compose
+.tmp
+node_modules
+/dev
+/db-files
+
+app/mongo-data
