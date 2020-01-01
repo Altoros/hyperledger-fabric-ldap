@@ -1,0 +1,269 @@
+version: 1
+
+dn: dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: domain
+objectClass: top
+dc: ${ORG_NAME}
+
+dn: ou=groups,dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: organizationalUnit
+ou: groups
+
+dn: ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: organizationalUnit
+objectClass: top
+ou: users
+
+dn: cn=user.1,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: posixGroup
+cn: user.1
+gidNumber: 10001
+
+dn: cn=user.2,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: posixGroup
+cn: user.2
+gidNumber: 10002
+
+dn: cn=user.3,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: posixGroup
+cn: user.3
+gidNumber: 10003
+
+dn: cn=user.4,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: posixGroup
+cn: user.4
+gidNumber: 10004
+
+dn: cn=user.5,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: posixGroup
+cn: user.5
+gidNumber: 10005
+
+dn: uid=user.1,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: nsdCrypto
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.1
+gidNumber: 10001
+homeDirectory: /home/user.1
+sn: ${ORG_NAME}
+uid: user.1
+uidNumber: 10001
+ecdsa-public-key: {"x": "1", "y":"2"}
+givenName: user.1
+loginShell: /bin/bash
+mail: user.1@${ORG_NAME}.${DOMAIN_NAME}.${DOMAIN_ZONE}
+o: ${ORG_NAME}
+ou: Confirm
+st: North Carolina
+pwdReset: TRUE
+userPassword: {SSHA}4VuwxXVA+opGPCulrhzXOdu/9LlrRbRWQdltFQ==
+
+dn: uid=user.2,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: nsdCrypto
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.2
+gidNumber: 10002
+homeDirectory: /home/user.2
+sn: ${ORG_NAME}
+uid: user.2
+uidNumber: 10002
+ecdsa-public-key: {"x": "1", "y":"2"}
+givenName: user.2
+loginShell: /bin/bash
+mail: user.2@${ORG_NAME}.${DOMAIN_NAME}.${DOMAIN_ZONE}
+o: ${ORG_NAME}
+ou: Execute
+st: North Carolina
+pwdReset: TRUE
+userPassword: {SSHA}4hAkO66KhW/PvDRSMYmHCj3C2juna/cSMeAwOg==
+
+dn: uid=user.3,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: nsdCrypto
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.3
+gidNumber: 10003
+homeDirectory: /home/user.3
+sn: ${ORG_NAME}
+uid: user.3
+uidNumber: 10003
+ecdsa-public-key: {"x": "1", "y":"2"}
+givenName: user.3
+loginShell: /bin/bash
+mail: user.3@${ORG_NAME}.${DOMAIN_NAME}.${DOMAIN_ZONE}
+o: ${ORG_NAME}
+ou: Send
+st: North Carolina
+pwdReset: TRUE
+userPassword: {SSHA}Cxvw/3zuaVwXCKhdjaM5CCXKOOo+1GVYO1rtGQ==
+
+dn: uid=user.4,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: nsdCrypto
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.4
+gidNumber: 10004
+homeDirectory: /home/user.4
+sn: ${ORG_NAME}
+uid: user.4
+uidNumber: 10004
+ecdsa-public-key: {"x": "1", "y":"2"}
+givenName: user.4
+loginShell: /bin/bash
+mail: user.4@${ORG_NAME}.${DOMAIN_NAME}.${DOMAIN_ZONE}
+o: ${ORG_NAME}
+ou: View
+st: North Carolina
+pwdReset: TRUE
+userPassword: {SSHA}2Ppxx0CAwc0rkiov3e+txwQXglpntOE3D33LIg==
+
+dn: uid=user.5,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: nsdCrypto
+objectClass: inetOrgPerson
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.5
+gidNumber: 10005
+homeDirectory: /home/user.5
+sn: ${ORG_NAME}
+uid: user.5
+uidNumber: 10005
+ecdsa-public-key: {"x": "1", "y":"2"}
+givenName: user.5
+loginShell: /bin/bash
+mail: user.5@${ORG_NAME}.${DOMAIN_NAME}.${DOMAIN_ZONE}
+o: ${ORG_NAME}
+ou: View
+st: North Carolina
+pwdReset: TRUE
+userPassword: {SSHA}raujNEA+9S6JsHQALnBLpGeF3DXkJY0WY34GTA==
+
+dn: cn=Send,ou=groups,dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: groupOfNames
+objectClass: nsdPermissions
+cn: Send
+member: uid=user.1,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+member: uid=user.5,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+description: Members of this group have only send permissions
+draft-view: TRUE
+issue-draft-entry: FALSE
+issue-draft-edit: FALSE
+issue-draft-delete: FALSE
+issue-draft-send-to-confirm: FALSE
+issue-draft-rollback-to-editing: TRUE
+issue-draft-confirm: FALSE
+issue-draft-sign: TRUE
+issue-guarantee-send: TRUE
+issued-guarantee-get: TRUE
+issued-guarantee-view: TRUE
+issued-guarantee-edit-meta: FALSE
+issued-guarantee-closure: FALSE
+closure-draft-edit: FALSE
+closure-draft-delete: FALSE
+closure-draft-send-to-confirm: FALSE
+closure-draft-rollback-to-editing: TRUE
+closure-draft-confirm: FALSE
+closure-draft-sign: TRUE
+closure-guarantee-send: TRUE
+closed-guarantee-get: TRUE
+closed-guarantee-view: TRUE
+closed-guarantee-edit-meta: FALSE
+
+dn: cn=View,ou=groups,dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: groupOfNames
+objectClass: nsdPermissions
+cn: View
+member: uid=user.2,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+description: Members of this group have only view permissions
+draft-view: TRUE
+issue-draft-entry: FALSE
+issue-draft-edit: FALSE
+issue-draft-delete: FALSE
+issue-draft-send-to-confirm: FALSE
+issue-draft-rollback-to-editing: FALSE
+issue-draft-confirm: FALSE
+issue-draft-sign: FALSE
+issue-guarantee-send: FALSE
+issued-guarantee-get: TRUE
+issued-guarantee-view: TRUE
+issued-guarantee-edit-meta: FALSE
+issued-guarantee-closure: FALSE
+closure-draft-edit: FALSE
+closure-draft-delete: FALSE
+closure-draft-send-to-confirm: FALSE
+closure-draft-rollback-to-editing: FALSE
+closure-draft-confirm: FALSE
+closure-draft-sign: FALSE
+closure-guarantee-send: FALSE
+closed-guarantee-get: TRUE
+closed-guarantee-view: TRUE
+closed-guarantee-edit-meta: FALSE
+
+dn: cn=Confirm,ou=groups,dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: groupOfNames
+objectClass: nsdPermissions
+cn: Confirm
+member: uid=user.3,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+member: uid=user.5,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+description: Members of this group have only confirm permissions
+draft-view: TRUE
+issue-draft-entry: FALSE
+issue-draft-edit: FALSE
+issue-draft-delete: FALSE
+issue-draft-send-to-confirm: FALSE
+issue-draft-rollback-to-editing: TRUE
+issue-draft-confirm: TRUE
+issue-draft-sign: FALSE
+issue-guarantee-send: FALSE
+issued-guarantee-get: TRUE
+issued-guarantee-view: TRUE
+issued-guarantee-edit-meta: FALSE
+issued-guarantee-closure: FALSE
+closure-draft-edit: FALSE
+closure-draft-delete: FALSE
+closure-draft-send-to-confirm: FALSE
+closure-draft-rollback-to-editing: TRUE
+closure-draft-confirm: TRUE
+closure-draft-sign: FALSE
+closure-guarantee-send: FALSE
+closed-guarantee-get: TRUE
+closed-guarantee-view: TRUE
+closed-guarantee-edit-meta: FALSE
+
+dn: cn=Execute,ou=groups,dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+objectClass: groupOfNames
+objectClass: nsdPermissions
+cn: Execute
+member: uid=user.4,ou=users,dc=${ORG_NAME},dc=${DOMAIN_NAME},dc=${DOMAIN_ZONE}
+description: Members of this group have only execute permissions
+draft-view: TRUE
+issue-draft-entry: TRUE
+issue-draft-edit: TRUE
+issue-draft-delete: TRUE
+issue-draft-send-to-confirm: TRUE
+issue-draft-rollback-to-editing: TRUE
+issue-draft-confirm: FALSE
+issue-draft-sign: FALSE
+issue-guarantee-send: FALSE
+issued-guarantee-get: TRUE
+issued-guarantee-view: TRUE
+issued-guarantee-edit-meta: TRUE
+issued-guarantee-closure: TRUE
+closure-draft-edit: TRUE
+closure-draft-delete: TRUE
+closure-draft-send-to-confirm: TRUE
+closure-draft-rollback-to-editing: TRUE
+closure-draft-confirm: FALSE
+closure-draft-sign: FALSE
+closure-guarantee-send: FALSE
+closed-guarantee-get: TRUE
+closed-guarantee-view: TRUE
+closed-guarantee-edit-meta: TRUE
+
+
