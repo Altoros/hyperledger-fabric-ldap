@@ -1,0 +1,18 @@
+#!/usr/bin/with-contenv bash
+
+source /assets/functions/*
+PROCESS_NAME="nginx"
+check_initialized
+
+
+if [ ! -f /www/html/index.html ] ; then
+   echo "** [nginx] No Files found - Creating Blank File"
+   mkdir -p /www/html
+   touch /www/html/index.html
+   chown nginx /www/html
+fi
+
+liftoff
+
+print_info "Starting nginx'
+exec nginx

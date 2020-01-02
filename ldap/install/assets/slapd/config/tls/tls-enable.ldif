@@ -1,0 +1,19 @@
+dn: cn=config
+changetype: modify
+replace: olcTLSCipherSuite
+olcTLSCipherSuite: <TLS_CIPHER_SUITE>
+-
+replace: olcTLSCACertificateFile
+olcTLSCACertificateFile: <TLS_CA_CRT_PATH>
+-
+replace: olcTLSCertificateFile
+olcTLSCertificateFile: <TLS_CRT_PATH>
+-
+replace: olcTLSCertificateKeyFile
+olcTLSCertificateKeyFile: <TLS_KEY_PATH>
+-
+replace: olcTLSDHParamFile
+olcTLSDHParamFile: <TLS_DH_PARAM_PATH>
+-
+replace: olcTLSVerifyClient
+olcTLSVerifyClient: <TLS_VERIFY_CLIENT>

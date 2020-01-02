@@ -1,59 +1,188 @@
-# Use osixia/light-baseimage
-# sources: https://github.com/osixia/docker-light-baseimage
-FROM osixia/light-baseimage:release-1.2.0-dev
+FROM tiredofit/alpine:3.10
+LABEL maintainer="Dave Conroy <dave@tiredofit.ca>"
 
-ARG LDAP_OPENLDAP_GID
-ARG LDAP_OPENLDAP_UID
+ENV ADMIN_PASS=admin \
+    BACKEND=mdb \
+    BACKUP_CONFIG_CRON_PERIOD="0 4 * * *" \
+    BACKUP_DATA_CRON_PERIOD="0 4 * * *" \
+    BACKUP_TTL=15 \
+    CONFIG_PASS=config \
+    DOMAIN=example.org \
+    ENABLE_NGINX=false \
+    ENABLE_READONLY_USER=false \
+    ENABLE_REPLICATION=false \
+    ENABLE_SMTP=FALSE \
+    ENABLE_TLS=true \
+    LOG_LEVEL=256 \
+    OPENLDAP_VERSION=2.4.48 \
+    ORGANIZATION="Example Organization" \
+    READONLY_USER_PASS=readonly \
+    READONLY_USER_USER=readonly \
+    REMOVE_CONFIG_AFTER_SETUP=false \
+    SCHEMA2LDIF_VERSION=1.3 \
+    SCHEMA_TYPE=nis \
+    SSL_HELPER_PREFIX=ldap \
+    TLS_CA_CRT_FILENAME=ca.pem \
+    TLS_CIPHER_SUITE="ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:RSA+AESGCM:RSA+AES:-DHE-DSS:-RSA:!aNULL:!MD5:!DSS:!SHA" \
+    TLS_CRT_FILENAME=cert.pem \
+    TLS_ENFORCE=false \
+    TLS_KEY_FILENAME=key.pem \
+    TLS_VERIFY_CLIENT=try \
+    ZABBIX_HOSTNAME=openldap-app
 
-ARG PQCHECKER_VERSION=2.0.0
-ARG PQCHECKER_MD5=c005ce596e97d13e39485e711dcbc7e1
 
-# Add openldap user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-# If explicit uid or gid is given, use it.
-RUN if [ -z "${LDAP_OPENLDAP_GID}" ]; then groupadd -r openldap; else groupadd -r -g ${LDAP_OPENLDAP_GID} openldap; fi \
-    && if [ -z "${LDAP_OPENLDAP_UID}" ]; then useradd -r -g openldap openldap; else useradd -r -g openldap -u ${LDAP_OPENLDAP_UID} openldap; fi
+COPY CHANGELOG.md /tiredofit/
 
-# Add buster-backports in preparation for downloading newer openldap components, especially sladp
-RUN echo "deb http://ftp.debian.org/debian buster-backports main" >> /etc/apt/sources.list
+RUN set -x && \
+### Add OpenLDAP user and group
+    addgroup -g 389 ldap && \
+    adduser -S -D -H -h /var/lib/openldap -s /sbin/nologin -G ldap -u 389 ldap && \
+    \
+### Fetch Build Dependencies
+    apk update && \
+    apk add -t .openldap-build-deps \
+        autoconf \
+        automake \
+        build-base \
+        cracklib-dev \
+        cyrus-sasl-dev \
+        db-dev \
+        git \
+        groff \
+        libressl-dev \
+        libtool \
+        m4 \
+        mosquitto-dev \
+        unixodbc-dev \
+        util-linux-dev \
+        && \
+    \
+### Fetch Runtime Dependencies
+    apk add -t .openldap-run-deps \
+        cyrus-sasl \
+        coreutils \
+        cracklib \
+        libressl \
+        libltdl \
+        libuuid \
+        libintl \
+        nginx \
+        perl \
+        sed \
+        sudo \
+        unixodbc \
+        && \
+    \
+### Grab OpenLDAP Source, Alpine Patches and Check ppolicy module
+    \
+    mkdir -p /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    curl -sSL ftp://ftp.openldap.org/pub/OpenLDAP/openldap-release/openldap-$OPENLDAP_VERSION.tgz | tar xvfz - --strip 1 -C /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    git clone --depth 1 git://git.alpinelinux.org/aports.git /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/alpine && \
+    mkdir -p contrib/slapd-modules/ppolicy-check-password && \
+    git clone https://github.com/cedric-dufour/ppolicy-check-password /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/contrib/slapd-modules/ppolicy-check-password && \
+    mkdir -p contrib/slapd-modules/ppm && \
+    git clone https://github.com/ltb-project/ppm /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/contrib/slapd-modules/ppm && \
+    cd /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/alpine && \
+    git filter-branch --prune-empty --subdirectory-filter main/openldap HEAD && \
+    # Already applied
+    rm -rf CVE-2017-9287.patch && \
+    \
+### Apply Patches
+    cd /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    for patch in ./alpine/*.patch; do echo "** Applying $patch"; patch -p1 < $patch; done && \
+### Compile OpenLDAP
+    cd /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    libtoolize --force && \
+    aclocal && \
+    autoconf && \
+    \
+    ./configure \
+        --build=$CBUILD \
+        --host=$CHOST \
+        --prefix=/usr \
+        --libexecdir=/usr/lib \
+        --sysconfdir=/etc \
+        --mandir=/usr/share/man \
+        --localstatedir=/var/run/openldap \
+        --enable-slapd \
+        --enable-crypt \
+        --enable-modules \
+        --enable-dynamic \
+        --enable-bdb=mod \
+        --enable-dnssrv=mod \
+        --enable-hdb=mod \
+        --enable-ldap=mod \
+        --enable-mdb=mod \
+        --enable-meta=mod \
+        --enable-monitor=yes \
+        --enable-null=mod \
+        --enable-passwd=mod \
+        --enable-spasswd \
+        --enable-relay=mod \
+        --enable-shell=mod \
+        --enable-sock=mod \
+        --enable-sql=mod \
+        --enable-overlays=mod \
+        --with-tls=openssl \
+        --with-cyrus-sasl \
+        && \
+    \
+    make DESTDIR="" install && \
+    \
+    ## Build MQTT overlay.
+    make DESTDIR="" prefix=/usr libexec=/usr/lib -C contrib/slapd-modules/mqtt install && \
+    #\
+    ## Build passwd pbkdf2.
+    make DESTDIR="" prefix=/usr libexecdir=/usr/lib -C contrib/slapd-modules/passwd/pbkdf2 install && \
+    #\
+    ## Build ppolicy-check Module
+    cd /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    make prefix=/usr libexecdir=/usr/lib -C contrib/slapd-modules/ppolicy-check-password LDAP_INC_PATH=/tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}` && \
+    cp /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/contrib/slapd-modules/ppolicy-check-password/check_password.so /usr/lib/openldap && \
+    ## Build Alternative PPM Module
+    cd /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/ && \
+    make prefix=/usr libexecdir=/usr/lib -C contrib/slapd-modules/ppm LDAP_INC_PATH=/tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}` && \
+    cp /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/contrib/slapd-modules/ppm/ppm.so /usr/lib/openldap && \
+    \
+### OpenLDAP Setup
+    ln -s /usr/lib/slapd /usr/sbin && \
+    mkdir -p /usr/share/doc/openldap && \
+    mv /etc/openldap/*.default /usr/share/doc/openldap && \
+    rm -rf /etc/openldap/* && \
+    mkdir -p /etc/openldap/sasl2 && \
+    echo "mech_list: plain external" > /etc/openldap/sasl2/slapd.conf && \
+    mkdir -p /etc/openldap/schema && \
+    cp -R /tiredofit/openldap:`head -n 1 /tiredofit/CHANGELOG.md | awk '{print $2'}`/servers/slapd/schema/*.schema /etc/openldap/schema && \
+    mkdir -p /run/openldap && \
+    chown -R ldap:ldap /run/openldap && \
+    \
+### SSL Helpers
+    curl -o /usr/sbin/cfssl -SL https://pkg.cfssl.org/R1.2/cfssl_linux-amd64 && \
+    chmod 700 /usr/sbin/cfssl && \
+    curl -o /usr/sbin/cfssljson -SL https://pkg.cfssl.org/R1.2/cfssljson_linux-amd64 && \
+    chmod 700 /usr/sbin/cfssljson && \
+    \
+## Install Schema2LDIF
+    curl https://codeload.github.com/fusiondirectory/schema2ldif/tar.gz/${SCHEMA2LDIF_VERSION} | tar xvfz - --strip 1 -C /usr && \
+    rm -rf /usr/Changelog && \
+    rm -rf /usr/LICENSE && \
+    \
+## Create Cracklib Dictionary
+    mkdir -p /usr/share/dict && \
+    cd /usr/share/dict && \
+    wget https://github.com/cracklib/cracklib/releases/download/v2.9.7/cracklib-words-2.9.7.gz && \
+    create-cracklib-dict -o pw_dict cracklib-words-2.9.7.gz && \
+    rm -rf cracklib-words-2.9.7.gz && \
+    \
+### Cleanup
+    apk del \
+        .openldap-build-deps \
+        && \
+    rm -rf /tiredofit \
+           /var/cache/apk/*
 
-# Install OpenLDAP, ldap-utils and ssl-tools from the (backported) baseimage and clean apt-get files
-# sources: https://github.com/osixia/docker-light-baseimage/blob/stable/image/tool/add-service-available
-#          https://github.com/osixia/docker-light-baseimage/blob/stable/image/service-available/:ssl-tools/download.sh
-RUN echo "path-include /usr/share/doc/krb5*" >> /etc/dpkg/dpkg.cfg.d/docker && apt-get -y update \
-    && /container/tool/add-service-available :ssl-tools \
-    && LC_ALL=C DEBIAN_FRONTEND=noninteractive apt-get -t buster-backports install -y --no-install-recommends \
-    ca-certificates \
-    curl \
-    ldap-utils \
-    libsasl2-modules \
-    libsasl2-modules-db \
-    libsasl2-modules-gssapi-mit \
-    libsasl2-modules-ldap \
-    libsasl2-modules-otp \
-    libsasl2-modules-sql \
-    openssl \
-    slapd \
-    krb5-kdc-ldap \
-    && curl -o pqchecker.deb -SL http://www.meddeb.net/pub/pqchecker/deb/8/pqchecker_${PQCHECKER_VERSION}_amd64.deb \
-    && echo "${PQCHECKER_MD5} *pqchecker.deb" | md5sum -c - \
-    && dpkg -i pqchecker.deb \
-    && rm pqchecker.deb \
-    && apt-get remove -y --purge --auto-remove curl ca-certificates \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+### Networking
+EXPOSE 80 389 636 
 
-# Add service directory to /container/service
-ADD service /container/service
-
-# Use baseimage install-service script
-# https://github.com/osixia/docker-light-baseimage/blob/stable/image/tool/install-service
-RUN /container/tool/install-service
-
-# Add default env variables
-ADD environment /container/environment/99-default
-
-# Expose default ldap and ldaps ports
-EXPOSE 389 636
-
-# Put ldap config and database dir in a volume to persist data.
-# VOLUME /etc/ldap/slapd.d /var/lib/ldap
+### Add Assets
+ADD install /

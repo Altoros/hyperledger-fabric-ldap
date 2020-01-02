@@ -1,0 +1,23 @@
+objectidentifier demoSchema 1.3.6.1.4.1.X.Y
+objectidentifier demoAttrs demoSchema:3
+objectidentifier demoOCs demoSchema:4
+
+attributetype ( demoAttrs:1
+	NAME 'maxValue'
+	DESC 'Integer. Maximum value for balance transfer.'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+attributetype ( demoAttrs:2
+	NAME 'minValue'
+	DESC 'Integer. Minimum value for balance transfer.'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 )
+
+objectclass ( demoOCs:1
+	NAME 'hlfDemo'
+	SUP ( top ) AUXILIARY
+	DESC 'Simple demo class for HLF Network'
+	MAY ( max $ min) )
