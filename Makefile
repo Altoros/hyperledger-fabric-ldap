@@ -1,5 +1,5 @@
-.PHONY: generate artifacts up clean build-client build-orchestrator build-ldap build-db
-.PHONY: up-orchestrator down-orchestrator upgrade sp_deploy restart-app invoke-cc query-cc
+.PHONY: generate artifacts up-network up-ldap clean build-client build-ldap
+.PHONY:
 
 ARGS = --local --config hosts.yml
 
@@ -13,17 +13,19 @@ help:
 	@echo "build-client: build web client (building occurs inside docker container, no Node dependency)"
 	@echo ""
 
-generate: up-orchestrator artifacts build-ldap build-db build-client
+generate: artifacts build-ldap build-client
 
-artifacts: up-orchestrator
-	docker exec orchestrator python3 network.py generate $(ARGS)
+artifacts:
+	cd first-network && ./byfn.sh generate
 
-up: up-orchestrator
-	docker exec orchestrator python3 network.py up $(ARGS)
+up-network:
+	cd first-network && export CERTIFICATE_AUTHORITIES=true && ./byfn.sh up
+
+up-ldap:
+	docker-compose -f ldap/docker-compose-ldap.yml up -d
 
 clean:
-	docker exec orchestrator python3 network.py clean $(ARGS)
-	docker-compose -f orchestrator/docker-compose.yml down
+	cd first-network && ./byfn.sh down
 
 force-clean:
 	docker ps -qa | xargs docker stop
@@ -39,24 +41,3 @@ build-orchestrator:
 
 build-ldap:
 	./scripts/build-ldap.sh
-
-build-db:
-	./scripts/build-db.sh
-
-up-orchestrator: build-orchestrator
-	docker-compose -f orchestrator/docker-compose.yml up -d
-
-down-orchestrator:
-	docker-compose -f orchestrator/docker-compose.yml down
-
-upgrade:
-	docker exec -ti orchestrator python3 network.py upgrade $(ARGS)
-
-restart-app:
-	docker restart app.bank-belveb-by.nsd.ru app.bank-mkb-ru.nsd.ru
-
-invoke-cc:
-	python3 test/nsd_test.py invoke
-
-query-cc:
-	python3 test/nsd_test.py query

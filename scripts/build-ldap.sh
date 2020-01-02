@@ -3,4 +3,4 @@
 echo "Building openldap"
 
 cd ldap/
-docker build -t demo/openldap:latest .
+docker build -t demo/ldap:latest .
