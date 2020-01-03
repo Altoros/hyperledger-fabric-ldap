@@ -46,6 +46,8 @@ help:
 
 generate: artifacts build-ldap
 
+up: up-ldap up-ca up-network
+
 bootstrap:
 	curl -sS https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh -o ./bootstrap.sh && \
 	chmod +x ./bootstrap.sh && \
@@ -67,7 +69,7 @@ up-ca:
 	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
     export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
     export IMAGE_TAG=$(IMAGE_TAG) && \
-	docker-compose -f fabric-ca/docker-compose-ca.yaml up -d
+	docker-compose -f fabric-ca-server/docker-compose-ca.yaml up -d
 
 down-ldap:
 	docker-compose -f openldap/docker-compose-ldap.yaml down
@@ -76,9 +78,9 @@ down-ca:
 	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
 	export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
 	export IMAGE_TAG=$(IMAGE_TAG) && \
-	docker-compose -f fabric-ca/docker-compose-ca.yaml down
+	docker-compose -f fabric-ca-server/docker-compose-ca.yaml down
 
-clean:
+clean: down-ca down-ldap
 	cd $(FN_PATH) && ./byfn.sh down
 
 force-clean:
