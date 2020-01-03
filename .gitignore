@@ -4,6 +4,5 @@
 .tmp
 node_modules
 /dev
-/db-files
-
-app/mongo-data
+/fabric-samples
+/bootstrap.sh

@@ -1,0 +1,148 @@
+objectidentifier nsdSchema 1.3.6.1.4.1.X.Y
+objectidentifier nsdAttrs nsdSchema:3
+objectidentifier nsdOCs nsdSchema:4
+
+attributetype ( nsdAttrs:1
+	NAME 'draft-view'
+	DESC 'draft-view'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:2
+	NAME 'issue-draft-entry'
+	DESC 'issue-draft-entry'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:3
+	NAME 'issue-draft-edit'
+	DESC 'issue-draft-edit'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:4
+	NAME 'issue-draft-delete'
+	DESC 'issue-draft-delete'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:5
+	NAME 'issue-draft-send-to-confirm'
+	DESC 'issue-draft-send-to-confirm'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:6
+	NAME 'issue-draft-rollback-to-editing'
+	DESC 'issue-draft-rollback-to-editing'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:7
+	NAME 'issue-draft-confirm'
+	DESC 'issue-draft-confirm'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:8
+	NAME 'issue-draft-sign'
+	DESC 'issue-draft-sign'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:9
+	NAME 'issue-guarantee-send'
+	DESC 'issue-guarantee-send'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:10
+	NAME 'issued-guarantee-get'
+	DESC 'issued-guarantee-get'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:11
+	NAME 'issued-guarantee-view'
+	DESC 'issued-guarantee-view'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:12
+	NAME 'issued-guarantee-edit-meta'
+	DESC 'issued-guarantee-edit-meta'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:13
+	NAME 'issued-guarantee-closure'
+	DESC 'issued-guarantee-closure'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:14
+	NAME 'closure-draft-edit'
+	DESC 'closure-draft-edit'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:15
+	NAME 'closure-draft-delete'
+	DESC 'closure-draft-delete'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:16
+	NAME 'closure-draft-send-to-confirm'
+	DESC 'closure-draft-send-to-confirm'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:17
+	NAME 'closure-draft-rollback-to-editing'
+	DESC 'closure-draft-rollback-to-editing'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:18
+	NAME 'closure-draft-confirm'
+	DESC 'closure-draft-confirm'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:19
+	NAME 'closure-draft-sign'
+	DESC 'closure-draft-sign'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:20
+	NAME 'closure-guarantee-send'
+	DESC 'closure-guarantee-send'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:21
+	NAME 'closed-guarantee-get'
+	DESC 'closed-guarantee-get'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:22
+	NAME 'closed-guarantee-view'
+	DESC 'closed-guarantee-view'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:23
+	NAME 'closed-guarantee-edit-meta'
+	DESC 'closed-guarantee-edit-meta'
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.7 )
+
+attributetype ( nsdAttrs:24
+	NAME 'ecdsa-public-key'
+	DESC 'ecdsa-public-key'
+	EQUALITY caseIgnoreMatch
+	SUBSTR caseIgnoreSubstringsMatch
+	SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{255} )
+
+objectclass ( nsdOCs:1
+	NAME 'nsdPermissions'
+	SUP ( top ) AUXILIARY
+	DESC 'nsdPermissions'
+	MAY ( draft-view $ issue-draft-entry $
+		issue-draft-edit $ issue-draft-delete $
+		issue-draft-send-to-confirm $ issue-draft-rollback-to-editing $
+		issue-draft-confirm $ issue-draft-sign $
+		issue-guarantee-send $ issued-guarantee-get $
+		issued-guarantee-view $ issued-guarantee-edit-meta $
+		issued-guarantee-closure $ closure-draft-edit $
+		closure-draft-delete $ closure-draft-send-to-confirm $
+		closure-draft-rollback-to-editing $ closure-draft-confirm $
+		closure-draft-sign $ closure-guarantee-send $
+		closed-guarantee-get $ closed-guarantee-view $
+		closed-guarantee-edit-meta ) )
+
+objectclass ( nsdOCs:2
+	NAME 'nsdCrypto'
+	SUP ( top ) AUXILIARY
+	DESC 'nsdCrypto'
+	MAY ( ecdsa-public-key ) )
