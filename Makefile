@@ -4,17 +4,36 @@
 
 FS_PATH = ./
 FN_PATH = $(FS_PATH)/fabric-samples/first-network
-BIN_PATH = ./
 IMAGE_TAG = latest
 
 VERSION = 1.4.4
 CA_VERSION = 1.4.4
 THIRDPARTY_IMAGE_VERSION = 0.4.18
 
+# solo, kafka or etcdraft
+CONSENSUS = etcdraft
+VERBOSE = false
+
+UP_NETWORK_OPTIONS = up -o $(CONSENSUS)
+ifeq ($(VERBOSE), true)
+	UP_NETWORK_OPTIONS += -v
+endif
+
 SAMPLES = true
 BINARIES = true
 DOCKER = false
 
+BOOTSTRAP_OPTIONS = $(VERSION) $(CA_VERSION) $(THIRDPARTY_IMAGE_VERSION)
+
+ifeq ($(SAMPLES), false)
+	BOOTSTRAP_OPTIONS += -s
+endif
+ifeq ($(BINARIES), false)
+	BOOTSTRAP_OPTIONS += -b
+endif
+ifeq ($(DOCKER), false)
+	BOOTSTRAP_OPTIONS += -d
+endif
 help:
 	@echo "LDAP Integration Simple Demo"
 	@echo ""
@@ -25,15 +44,12 @@ help:
 	@echo "build-client: build web client (building occurs inside docker container, no Node dependency)"
 	@echo ""
 
-generate: artifacts build-ldap build-client
+generate: artifacts build-ldap
 
 bootstrap:
 	curl -sS https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh -o ./bootstrap.sh && \
 	chmod +x ./bootstrap.sh && \
-	export SAMPLES=$(SAMPLES) && \
-	export BINARIES=$(BINARIES) && \
-	export DOCKER=$(DOCKER) && \
-	./bootstrap.sh $(VERSION) $(CA_VERSION) $(THIRDPARTY_IMAGE_VERSION)
+	./bootstrap.sh $(BOOTSTRAP_OPTIONS)
 
 artifacts:
 	cd $(FN_PATH) && \
@@ -42,7 +58,7 @@ artifacts:
 up-network:
 	cd $(FN_PATH) && \
 	export IMAGE_TAG=$(IMAGE_TAG) && \
-	./byfn.sh up
+	./byfn.sh $(UP_NETWORK_OPTIONS)
 
 up-ldap:
 	docker-compose -f openldap/docker-compose-ldap.yaml up -d
