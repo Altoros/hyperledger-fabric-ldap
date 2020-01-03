@@ -1,0 +1,81 @@
+version: '2'
+
+networks:
+  byfn:
+
+services:
+
+  ldap.org1.example.com:
+    image: demo/ldap:latest
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    container_name: ldap.org1.example.com
+    restart: always
+    environment:
+      LDAP_aANISATION: "LDAP Organization"
+      LDAP_DOMAIN: "example.com"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_CONFIG_PASSWORD: "config"
+      # Tls
+      LDAP_TLS: "True"
+      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+      LDAP_TLS_KEY_FILENAME: "ldap.key"
+      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+      LDAP_TLS_ENFORCE: "True"
+      LDAP_TLS_CIPHER_SUITE: "SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC"
+      LDAP_TLS_VERIFY_CLIENT: "never"
+      LDAP_REPLICATION: "False"
+      KEEP_EXISTING_CONFIG: "False"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "False"
+      LDAP_SSL_HELPER_PREFIX: "ldap"
+    command: --copy-service --loglevel debug --dont-touch-etc-hosts
+    ports:
+      - 636:636
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ./pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+    hostname: "example.com"
+    networks:
+      - byfn
+
+  ldap.org2.example.com:
+    image: demo/ldap:latest
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    container_name: ldap.org2.example.com
+    restart: always
+    environment:
+      LDAP_aANISATION: "LDAP Organization"
+      LDAP_DOMAIN: "example.com"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD: "admin"
+      LDAP_CONFIG_PASSWORD: "config"
+      # Tls
+      LDAP_TLS: "True"
+      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+      LDAP_TLS_KEY_FILENAME: "ldap.key"
+      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+      LDAP_TLS_ENFORCE: "True"
+      LDAP_TLS_CIPHER_SUITE: "SECURE256:+SECURE128:-VERS-TLS-ALL:+VERS-TLS1.2:-RSA:-DHE-DSS:-CAMELLIA-128-CBC:-CAMELLIA-256-CBC"
+      LDAP_TLS_VERIFY_CLIENT: "never"
+      LDAP_REPLICATION: "False"
+      KEEP_EXISTING_CONFIG: "False"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "False"
+      LDAP_SSL_HELPER_PREFIX: "ldap"
+    command: --copy-service --loglevel debug --dont-touch-etc-hosts
+    ports:
+      - 736:636
+    volumes:
+      - /var/lib/ldap
+      - /etc/ldap/slapd.d
+      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ./pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+    hostname: "example.com"
+    networks:
+      - byfn
+

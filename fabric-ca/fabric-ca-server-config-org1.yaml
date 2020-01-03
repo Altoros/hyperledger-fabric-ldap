@@ -66,7 +66,7 @@
   #############################################################################
   tls:
     # Enable TLS (default: false)
-    enabled: false
+    enabled: true
     # TLS for the server's listening port
     certfile:
     keyfile:
@@ -174,7 +174,8 @@
     # If this is set to true, the "registry" section is ignored.
     enabled: true
     # The URL of the LDAP server
-    url: ldaps://cn=admin,dc=example,dc=com:admin@ldap.example.com:636/dc=example,dc=com
+    url: ldaps://cn=admin,dc=example,dc=com:admin@ldap.org1.example.com:636/dc=example,dc=com
+    userfilter: (cn=%s)
     # TLS configuration for the client connection to the LDAP server
     tls:
       certfiles:
@@ -196,8 +197,8 @@
       #       - name: hf.Revoker
       #         value: attr("uid") =~ "revoker*"
       converters:
-        - name:
-          value:
+        - name: hf.Revoker
+          value: attr("uid") =~ "revoker*"
       # The 'maps' section contains named maps which may be referenced by the 'map'
       # function in the 'converters' section to map LDAP responses to arbitrary values.
       # For example, assume a user has an LDAP attribute named 'member' which has multiple

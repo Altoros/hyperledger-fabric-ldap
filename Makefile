@@ -1,7 +1,9 @@
-.PHONY: generate artifacts up-network up-ldap clean build-client build-ldap
-.PHONY:
+.PHONY: generate artifacts up-network clean build-client build-ldap
+.PHONY: up-ldap up-ca down-ldap down-ca
 
 ARGS = --local --config hosts.yml
+FN_PATH = ./first-network
+IMAGE_TAG = latest
 
 help:
 	@echo "LDAP Integration Simple Demo"
@@ -16,13 +18,30 @@ help:
 generate: artifacts build-ldap build-client
 
 artifacts:
-	cd first-network && ./byfn.sh generate
+	cd $(FN_PATH) && \
+	./byfn.sh generate
 
 up-network:
-	cd first-network && export CERTIFICATE_AUTHORITIES=true && ./byfn.sh up
+	cd $(FN_PATH) && \
+	./byfn.sh up
 
 up-ldap:
-	docker-compose -f ldap/docker-compose-ldap.yml up -d
+	docker-compose -f openldap/docker-compose-ldap.yaml up -d
+
+up-ca:
+	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
+    export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
+    export IMAGE_TAG=$(IMAGE_TAG) && \
+	docker-compose -f fabric-ca/docker-compose-ca.yaml up -d
+
+down-ldap:
+	docker-compose -f openldap/docker-compose-ldap.yaml down
+
+down-ca:
+	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
+	export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
+	export IMAGE_TAG=latest && \
+	docker-compose -f fabric-ca/docker-compose-ca.yaml down
 
 clean:
 	cd first-network && ./byfn.sh down
@@ -35,9 +54,6 @@ force-clean:
 
 build-client:
 	./scripts/build-client.sh
-
-build-orchestrator:
-	./scripts/build-orchestrator.sh
 
 build-ldap:
 	./scripts/build-ldap.sh
