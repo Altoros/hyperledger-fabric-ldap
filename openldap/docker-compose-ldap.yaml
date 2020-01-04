@@ -1,15 +1,12 @@
 version: '2'
 
-networks:
-  byfn:
-
 services:
 
   ldap.org1.example.com:
     image: demo/ldap:latest
     build:
       dockerfile: ./Dockerfile
-      context: ./
+      context: ../../openldap/
     container_name: ldap.org1.example.com
     restart: always
     environment:
@@ -36,8 +33,8 @@ services:
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
-      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
-      - ./pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+      - ../../openldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:
       - byfn
@@ -46,7 +43,7 @@ services:
     image: demo/ldap:latest
     build:
       dockerfile: ./Dockerfile
-      context: ./
+      context: ../../openldap/
     container_name: ldap.org2.example.com
     restart: always
     environment:
@@ -73,8 +70,8 @@ services:
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
-      - ./ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
-      - ./pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+      - ../../openldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:
       - byfn

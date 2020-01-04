@@ -1,22 +1,35 @@
 .PHONY: bootstrap
-.PHONY: generate artifacts up-network up-ldap up-network build-client build-ldap
-.PHONY: down-ldap down-ca clean force-clean
+.PHONY: generate artifacts build-client build-ldap up
+.PHONY: clean force-clean
 
 FS_PATH = ./
 FN_PATH = $(FS_PATH)/fabric-samples/first-network
-IMAGE_TAG = latest
 
 VERSION = 1.4.4
 CA_VERSION = 1.4.4
 THIRDPARTY_IMAGE_VERSION = 0.4.18
 
 # solo, kafka or etcdraft
-CONSENSUS = etcdraft
-VERBOSE = false
+CONSENSUS = solo
+VERBOSE = true
+CERTIFICATE_AUTHORITIES = true
+CHANNEL_NAME = mychannel
+IF_COUCHDB = nocouchdb
+LDAP = true
 
-UP_NETWORK_OPTIONS = up -o $(CONSENSUS)
+
+UP_NETWORK_OPTIONS = up -o $(CONSENSUS) -c $(CHANNEL_NAME) -s $(IF_COUCHDB)
 ifeq ($(VERBOSE), true)
 	UP_NETWORK_OPTIONS += -v
+endif
+ifeq ($(CERTIFICATE_AUTHORITIES), true)
+	UP_NETWORK_OPTIONS += -a
+endif
+ifeq ($(LDAP), true)
+	UP_NETWORK_OPTIONS += -f \
+	"docker-compose-cli.yaml \
+	-f ../../fabric-ca-server/docker-compose-ca.yaml \
+	-f ../../openldap/docker-compose-ldap.yaml"
 endif
 
 SAMPLES = true
@@ -46,8 +59,6 @@ help:
 
 generate: artifacts build-ldap
 
-up: up-ldap up-ca up-network
-
 bootstrap:
 	curl -sS https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh -o ./bootstrap.sh && \
 	chmod +x ./bootstrap.sh && \
@@ -57,9 +68,8 @@ artifacts:
 	cd $(FN_PATH) && \
 	./byfn.sh generate
 
-up-network:
+up:
 	cd $(FN_PATH) && \
-	export IMAGE_TAG=$(IMAGE_TAG) && \
 	./byfn.sh $(UP_NETWORK_OPTIONS)
 
 up-ldap:
@@ -80,7 +90,7 @@ down-ca:
 	export IMAGE_TAG=$(IMAGE_TAG) && \
 	docker-compose -f fabric-ca-server/docker-compose-ca.yaml down
 
-clean: down-ca down-ldap
+clean:
 	cd $(FN_PATH) && ./byfn.sh down
 
 force-clean:
