@@ -175,7 +175,7 @@
     enabled: true
     # The URL of the LDAP server
     url: ldaps://cn=admin,dc=example,dc=com:admin@ldap.org1.example.com:636/dc=example,dc=com
-    userfilter: (cn=%s)
+    userfilter: (uid=%s)
     # TLS configuration for the client connection to the LDAP server
     tls:
       certfiles:

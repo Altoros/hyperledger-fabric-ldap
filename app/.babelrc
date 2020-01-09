@@ -1,0 +1,19 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "chrome": "77",
+          "ie": "11"
+        }
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": [
+    "react-hot-loader/babel",
+    "transform-class-properties",
+    ["@babel/plugin-transform-runtime", { "regenerator": true }]
+  ]
+}

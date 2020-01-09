@@ -1,0 +1,5 @@
+{
+   "api_ca_cert": "ca.crt",
+   "api_cert": "api.crt",
+   "api_key": "api.key"
+}

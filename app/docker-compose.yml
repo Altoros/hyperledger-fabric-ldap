@@ -1,0 +1,21 @@
+version: '3'
+services:
+  app:
+    container_name: example-app
+    build: .
+    ports:
+     - "3000:3000"
+    environment:
+      PORT: 3000
+      MONGO_DB_HOST: db
+    links:
+      - db
+    depends_on:
+      - db
+  db:
+    container_name: example-local-db
+    image: mongo
+    volumes:
+      - ./mongo-data:/data/db
+    ports:
+      - "27017:27017"
