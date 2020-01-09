@@ -1,5 +1,5 @@
 const ldap = require('ldapjs');
-const ldapError = require('./ldap-error');
+const ldapError = require('../tools/ldap-error');
 
 const {ldapConfig} = require('../helper');
 

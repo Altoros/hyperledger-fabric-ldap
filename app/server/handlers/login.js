@@ -1,12 +1,12 @@
 const ldap = require('ldapjs');
 const jwt = require('jsonwebtoken');
-const ldapError = require('./ldap-error');
+const ldapError = require('../tools/ldap-error');
 
 const { ldapConfig } = require('../helper');
 
 const { JWT_SECRET = 'example_secret', ORG = 'example' } = process.env;
 
-const { encrypt } = require('./encryption');
+const { encrypt } = require('../tools/encryption');
 
 const authenticate = (userId, password) =>
   new Promise((resolve, reject) => {
