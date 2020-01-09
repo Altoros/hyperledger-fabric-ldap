@@ -6,13 +6,13 @@ module.exports = (error) => {
     let pwdMustChange = false;
     if (error.name === 'InvalidCredentialsError') {
         code = 401;
-        msg = 'Введен неверный логин или пароль';
+        msg = 'Wrong username or password entered';
     } else if (error.name === 'InsufficientAccessRightsError') {
         code = 401;
         pwdMustChange = true;
     } else if (error.name === 'ConstraintViolationError') {
         code = 422;
-        msg = `Новый пароль не соответствует требованиям политики безопасности`;
+        msg = `New password does not meet security policy requirements`;
         pwdMustChange = true;
     } else if (error.name === 'NewPasswordValidationError') {
         code = 422;
@@ -20,7 +20,7 @@ module.exports = (error) => {
         pwdMustChange = true;
     } else {
         code = 500;
-        msg = `Внутренняя ошибка сервера`;
+        msg = `Internal Server Error`;
         logger.error(error);
     }
     return {

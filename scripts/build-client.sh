@@ -3,4 +3,4 @@
 echo "Building web-application"
 
 cd app/
-docker build -t nsd/app:latest .
+docker build -t demo/app:latest .

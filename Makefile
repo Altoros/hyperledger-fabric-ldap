@@ -13,9 +13,11 @@ THIRDPARTY_IMAGE_VERSION = 0.4.18
 CONSENSUS = solo
 VERBOSE = true
 CERTIFICATE_AUTHORITIES = true
-CHANNEL_NAME = mychannel
+CHANNEL_NAME = common
+CHAINCODE_NAME = ldap_demo
 IF_COUCHDB = nocouchdb
 LDAP = true
+APP = true
 
 
 UP_NETWORK_OPTIONS = up -o $(CONSENSUS) -c $(CHANNEL_NAME) -s $(IF_COUCHDB)
@@ -30,6 +32,10 @@ ifeq ($(LDAP), true)
 	"docker-compose-cli.yaml \
 	-f ../../fabric-ca-server/docker-compose-ca.yaml \
 	-f ../../openldap/docker-compose-ldap.yaml"
+endif
+
+ifeq ($(APP), true)
+	UP_NETWORK_OPTIONS += -f ../../app/docker-compose-app.yaml"
 endif
 
 SAMPLES = true
@@ -57,7 +63,7 @@ help:
 	@echo "build-client: build web client (building occurs inside docker container, no Node dependency)"
 	@echo ""
 
-generate: artifacts build-ldap
+generate: artifacts build-ldap build-client
 
 bootstrap:
 	curl -sS https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh -o ./bootstrap.sh && \
@@ -66,7 +72,7 @@ bootstrap:
 
 artifacts:
 	cd $(FN_PATH) && \
-	./byfn.sh generate
+	./byfn.sh generate -c $(CHANNEL_NAME)
 
 up:
 	cd $(FN_PATH) && \

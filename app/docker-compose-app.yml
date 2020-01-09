@@ -1,0 +1,54 @@
+version: '2'
+
+services:
+
+  app.org1.example.com:
+    container_name: app.org1.example.com
+    image: nsd/app:latest
+    build:
+      dockerfile: ./Dockerfile
+      context: ../../app
+    restart: always
+    ports:
+      - 3001:3001
+    volumes:
+      - $FN_PATH/crypto-config:/app/artifacts/crypto-config
+      - $FN_PATH/connection-org1.yaml:/app/artifacts/api-configs/network-config.yaml
+      - ../../app/server:/app/server #only for quick debugging
+    environment:
+      ORG: org1
+      DOMAIN: example.com
+      LDAP_HOST: ldap.org1.example.com
+      DEFAULT_HLF_CHANNEL: $CHANNEL_NAME
+      DEFAULT_HLF_CHAINCODE: $CHAINCODE_NAME
+      PORT: 3001
+      JWT_SECRET: 5agw5lmRedJ2P01ryQDB
+      ENCRYPTION_KEY: sgRYjFLaqB4o6i95L6khqIveRkpZPL37
+    networks:
+      - byfn
+
+  app.org2.example.com:
+    container_name: app.org2.example.com
+    image: nsd/app:latest
+    build:
+      dockerfile: ./Dockerfile
+      context: ../../app
+    restart: always
+    ports:
+      - 3002:3002
+    volumes:
+      - $FN_PATH/crypto-config:/app/artifacts/crypto-config
+      - $FN_PATH/connection-org2.yaml:/app/artifacts/api-configs/network-config.yaml
+      - ../../app/server:/app/server #only for quick debugging
+    environment:
+      ORG: org2
+      DOMAIN: example.com
+      LDAP_HOST: ldap.org2.example.com
+      DEFAULT_HLF_CHANNEL: $CHANNEL_NAME
+      DEFAULT_HLF_CHAINCODE: $CHAINCODE_NAME
+      PORT: 3002
+      JWT_SECRET: 4HqMXDHyJeaoj0pnmkJ1
+      ENCRYPTION_KEY: 42wp7IkGNY8mZBei741WXXRpzet9GaLi
+    networks:
+      - byfn
+
