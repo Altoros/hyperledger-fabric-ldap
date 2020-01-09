@@ -1,7 +1,7 @@
 const ldap = require('ldapjs');
 const ldapError = require('./ldap-error');
 
-const {log, ldapConfig} = require('../helper');
+const {ldapConfig} = require('../helper');
 
 class ValidationError extends Error {
     constructor(message) {
@@ -28,7 +28,7 @@ const changePassword = ({
 
             if (newPassword !== newPasswordRepeat) {
                 return reject(
-                    new ValidationError('Поля ввода нового пароля и подтверждения не совпадают')
+                    new ValidationError('The fields of new password mismatch')
                 );
             }
 
@@ -54,7 +54,6 @@ const changePassword = ({
     });
 
 module.exports = async (req, res) => {
-    const actor = req.user.user_info.full_name ? req.user.user_info.full_name : ORG;
     try {
         await changePassword({
             userId: `uid=${req.user.user_info.full_name},${ldapConfig.bindDn}`,
@@ -62,11 +61,9 @@ module.exports = async (req, res) => {
             oldPassword: req.body.currentPassword,
             newPasswordRepeat: req.body.newPasswordRepeat
         });
-        await log('change-password', actor, {success: true});
         return res.status(200).send({ok: true});
     } catch (e) {
         console.error(e);
-        await log('change-password', actor, {success: false, error: e.message});
         return res.status(ldapError(e).code).send({ok: false, error: ldapError(e).msg});
     }
 };

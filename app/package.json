@@ -39,6 +39,7 @@
     "date-fns": "^2.6.0",
     "elliptic": "^6.5.1",
     "express": "^4.17.1",
+    "fabric-ca-client": "^1.4.4",
     "fabric-network": "^1.4.4",
     "grpc": "^1.24.2",
     "isomorphic-fetch": "^2.2.1",

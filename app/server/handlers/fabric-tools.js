@@ -1,7 +1,7 @@
 // Bring key classes into scope, most importantly Fabric SDK network class
 const fs = require('fs');
 const yaml = require('js-yaml');
-const {FileSystemWallet, X509WalletMixin, Gateway} = require('fabric-network');
+const {FileSystemWallet, X509WalletMixin} = require('fabric-network');
 const path = require('path');
 var log4js = require('log4js');
 var logger = log4js.getLogger('DEMOFabricApi-Tools');
@@ -10,31 +10,57 @@ const artifacts = path.resolve(__dirname, '../../artifacts');
 
 const {
     ORG = 'example',
-    DOMAIN = 'example.com'
+    DOMAIN = 'example.com',
+    useCA = false
 } = process.env;
 
-const options = async () => {
+const options = async (identityLabel = 'User1') => {
     try {
-        const identityLabel = 'User1';
-        // Identity to credentials to be stored in the wallet
-        const credPath = path.join(artifacts, `/crypto-config/peerOrganizations/${ORG}.${DOMAIN}/users/${identityLabel}@${ORG}.${DOMAIN}`);
-        const cert = fs.readFileSync(path.join(credPath, `/msp/signcerts/${identityLabel}@${ORG}.${DOMAIN}-cert.pem`)).toString();
-        const key = fs.readFileSync(path.join(credPath, '/msp/keystore/server.key')).toString();
-
-        // Load credentials into wallet
-        const identity = X509WalletMixin.createIdentity(`${ORG}MSP`, cert, key);
         const walletPath = path.join(process.cwd(), 'wallet');
         const wallet = new FileSystemWallet(walletPath);
         logger.debug(`Wallet path: ${walletPath}`);
-
-        await wallet.import(identityLabel, identity);
-
+        // Check to see if we've already imported the identity.
+        const userExists = await wallet.exists(identityLabel);
+        if (!userExists) {
+            if (!useCA) {
+                // Identity to credentials to be stored in the wallet
+                const credPath = path.join(artifacts, `/crypto-config/peerOrganizations/${ORG}.${DOMAIN}/users/${identityLabel}@${ORG}.${DOMAIN}`);
+                const cert = fs.readFileSync(path.join(credPath, `/msp/signcerts/${identityLabel}@${ORG}.${DOMAIN}-cert.pem`)).toString();
+                const key = fs.readFileSync(path.join(credPath, '/msp/keystore/server.key')).toString();
+                // Load credentials into wallet
+                const identity = X509WalletMixin.createIdentity(`${ORG}MSP`, cert, key);
+                await wallet.import(identityLabel, identity);
+            } else {
+                const message = `An identity for the user "${identityLabel}" does not exist in the wallet`;
+                throw new Error(message);
+            }
+        }
         return {
             success: true,
             value: {
                 identity: identityLabel,
-                wallet: wallet,
-                discovery: {enabled: false, asLocalhost: true}
+                wallet,
+                discovery: {enabled: true, asLocalhost: true}
+            }
+        };
+    } catch (e) {
+        logger.error(e);
+        return {
+            success: false,
+            value: e.message
+        };
+    }
+};
+
+const wallet = async () => {
+    try {
+        const walletPath = path.join(process.cwd(), 'wallet');
+        const wallet = new FileSystemWallet(walletPath);
+        logger.debug(`Wallet path: ${walletPath}`);
+        return {
+            success: true,
+            value: {
+                wallet
             }
         };
     } catch (e) {
@@ -49,7 +75,7 @@ const options = async () => {
 const profile = async () => {
     try {
         const configPath = path.join(artifacts, '/api-configs/network-config.yaml');
-        let fileContent = fs.readFileSync(configPath, 'utf8');
+        const fileContent = fs.readFileSync(configPath, 'utf8');
 
         return {
             success: true,
@@ -67,12 +93,13 @@ const profile = async () => {
 const channelsByParticipiants = async (participiants = [ORG]) => {
     try {
         const configPath = path.join(artifacts, '/api-configs/network-config.yaml');
-        let fileContent = fs.readFileSync(configPath, 'utf8');
+        const fileContent = fs.readFileSync(configPath, 'utf8');
 
         const connectionProfile = yaml.safeLoad(fileContent);
 
-        let channels = [];
+        const channels = [];
         let inParticipiants;
+        // eslint-disable-next-line no-restricted-syntax
         for (const channel of connectionProfile.application.channels) {
             inParticipiants = true;
             participiants.forEach((member) => {
@@ -83,7 +110,7 @@ const channelsByParticipiants = async (participiants = [ORG]) => {
             if (inParticipiants) {
                 channels.push({
                     name: channel.name,
-                    chaincode: channel.chaincodes[0],
+                    chaincode: channel.chaincodes[0]
                 })
             }
         }
@@ -100,4 +127,4 @@ const channelsByParticipiants = async (participiants = [ORG]) => {
     }
 };
 
-module.exports = {options, profile, channelsByParticipiants};
+module.exports = {options, profile, channelsByParticipiants, wallet};

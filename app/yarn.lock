@@ -3362,7 +3362,7 @@ eyes@0.1.x:
   resolved "https://registry.yarnpkg.com/eyes/-/eyes-0.1.8.tgz#62cf120234c683785d902348a800ef3e0cc20bc0"
   integrity sha1-Ys8SAjTGg3hdkCNIqADvPgzCC8A=
 
-fabric-ca-client@latest:
+fabric-ca-client@^1.4.4, fabric-ca-client@latest:
   version "1.4.4"
   resolved "https://registry.yarnpkg.com/fabric-ca-client/-/fabric-ca-client-1.4.4.tgz#a7dfbf446a62c27faeef616a6971604f9ebf40c8"
   integrity sha512-lhs/ywszaatqCPObJx/884nGT4i3XWPqF/GKAhIoTfMWk5hXWoOliaV1pCbfkT6BVQMgYaoyx+k8hl+TiBlsDw==
