@@ -65,11 +65,6 @@ const App = ({ breadcrumbs }) => {
               component={() => <AddGuarantee issuer={org} />}
             />
             <Route exact path="/drafts" component={Guarantees} />
-            <Route exact path="/outgoing" component={Guarantees} />
-            <Route exact path="/incoming" component={Guarantees} />
-            <Route exact path="/drafts/:id" component={GuaranteeDetail} />
-            <Route exact path="/outgoing/:id" component={GuaranteeDetail} />
-            <Route exact path="/incoming/:id" component={GuaranteeDetail} />
             <Route exact path="/profile" component={Profile} />
             <Redirect from="*" to="/drafts" />
           </Switch>
@@ -80,13 +75,7 @@ const App = ({ breadcrumbs }) => {
 };
 
 export default withBreadcrumbs([
-  { path: '/', breadcrumb: 'Главная' },
-  { path: '/drafts/add', breadcrumb: 'Создать гарантию' },
-  { path: '/drafts', breadcrumb: 'Черновики' },
-  { path: '/outgoing', breadcrumb: 'Гарантии, выданные нами' },
-  { path: '/incoming', breadcrumb: 'Гарантии, выданные нам' },
-  { path: '/drafts/:id', breadcrumb: 'Просмотр гарантии' },
-  { path: '/outgoing/:id', breadcrumb: 'Просмотр гарантии' },
-  { path: '/incoming/:id', breadcrumb: 'Просмотр гарантии' },
-  { path: '/profile', breadcrumb: 'Профиль' }
+  { path: '/', breadcrumb: 'Home' },
+  { path: '/dashboard', breadcrumb: 'Dashboard' },
+  { path: '/profile', breadcrumb: 'Profile' }
 ])(App);

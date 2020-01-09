@@ -29,8 +29,8 @@ const userLdapInfo = (userId, password) =>
   new Promise((resolve, reject) => {
     const ldapClient = ldap.createClient(ldapConfig);
     ldapClient.bind(
-      `uid=${userId},${ldapConfig.bindDn}`,
-      password,
+      `${ldapConfig.adminDn}`,
+        `${ldapConfig.adminPw}`,
       (err, res) => {
         if (err) {
           // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305

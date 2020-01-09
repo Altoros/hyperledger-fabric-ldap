@@ -11,6 +11,8 @@ const ldapConfig = {
   bindDn: `ou=users,ou=fabric,dc=hyperledeger,dc=${DOMAIN.split('.')[0]},dc=${
     DOMAIN.split('.')[1]
   }`,
+  adminDn: `cn=admin,dc=${DOMAIN.split('.')[0]},dc=${DOMAIN.split('.')[1]}`,
+  adminPw: `admin`,
   baseDn: `dc=${DOMAIN.split('.')[0]},dc=${DOMAIN.split('.')[1]}`,
   timeout: 5000,
   connectTimeout: 10000,

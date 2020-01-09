@@ -1,7 +1,7 @@
 // Bring key classes into scope, most importantly Fabric SDK network class
 const {FileSystemWallet, X509WalletMixin, Gateway} = require('fabric-network');
 var log4js = require('log4js');
-var logger = log4js.getLogger('NSDFabricApi-Invoke');
+var logger = log4js.getLogger('DEMOFabricApi-Invoke');
 const {log} = require('../helper');
 const {options, profile} = require('./fabric-tools');
 

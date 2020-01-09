@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 const {FileSystemWallet, X509WalletMixin, Gateway} = require('fabric-network');
 const path = require('path');
 var log4js = require('log4js');
-var logger = log4js.getLogger('NSDFabricApi-Tools');
+var logger = log4js.getLogger('DEMOFabricApi-Tools');
 
 const artifacts = path.resolve(__dirname, '../../artifacts');
 

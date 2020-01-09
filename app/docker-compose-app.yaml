@@ -4,7 +4,7 @@ services:
 
   app.org1.example.com:
     container_name: app.org1.example.com
-    image: nsd/app:latest
+    image: demo/app:latest
     build:
       dockerfile: ./Dockerfile
       context: ../../app
@@ -29,7 +29,7 @@ services:
 
   app.org2.example.com:
     container_name: app.org2.example.com
-    image: nsd/app:latest
+    image: demo/app:latest
     build:
       dockerfile: ./Dockerfile
       context: ../../app

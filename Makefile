@@ -1,5 +1,5 @@
 .PHONY: bootstrap
-.PHONY: generate artifacts build-client build-ldap up
+.PHONY: generate artifacts build-client build-ldap up ss-certs
 .PHONY: clean force-clean
 
 FS_PATH = ./
@@ -21,6 +21,7 @@ APP = true
 
 
 UP_NETWORK_OPTIONS = up -o $(CONSENSUS) -c $(CHANNEL_NAME) -s $(IF_COUCHDB)
+EXTERNAL_SERVICES =
 ifeq ($(VERBOSE), true)
 	UP_NETWORK_OPTIONS += -v
 endif
@@ -28,15 +29,19 @@ ifeq ($(CERTIFICATE_AUTHORITIES), true)
 	UP_NETWORK_OPTIONS += -a
 endif
 ifeq ($(LDAP), true)
-	UP_NETWORK_OPTIONS += -f \
-	"docker-compose-cli.yaml \
+	EXTERNAL_SERVICES += \
 	-f ../../fabric-ca-server/docker-compose-ca.yaml \
-	-f ../../openldap/docker-compose-ldap.yaml"
+	-f ../../openldap/docker-compose-ldap.yaml
 endif
 
 ifeq ($(APP), true)
-	UP_NETWORK_OPTIONS += -f ../../app/docker-compose-app.yaml"
+	EXTERNAL_SERVICES += \
+	-f ../../app/docker-compose-app.yaml
 endif
+
+UP_NETWORK_OPTIONS += -f \
+	"docker-compose-cli.yaml \
+	$(EXTERNAL_SERVICES)"
 
 SAMPLES = true
 BINARIES = true
@@ -70,7 +75,7 @@ bootstrap:
 	chmod +x ./bootstrap.sh && \
 	./bootstrap.sh $(BOOTSTRAP_OPTIONS)
 
-artifacts:
+artifacts: ss-certs
 	cd $(FN_PATH) && \
 	./byfn.sh generate -c $(CHANNEL_NAME)
 
@@ -97,6 +102,7 @@ down-ca:
 	docker-compose -f fabric-ca-server/docker-compose-ca.yaml down
 
 clean:
+	rm -rf ss-certs && \
 	cd $(FN_PATH) && ./byfn.sh down
 
 force-clean:
@@ -105,10 +111,17 @@ force-clean:
 	docker volume rm $$(docker volume ls -q) -f # \
 	docker network prune # \
 	rm -rf fabric-samples # \
-	rm bootstrap.sh
+	rm bootstrap.sh # \
+	rm -rf ss-certs
 
 build-client:
 	./scripts/build-client.sh
 
 build-ldap:
 	./scripts/build-ldap.sh
+
+restart-app:
+	docker restart app.org1.example.com app.org2.example.com
+
+ss-certs:
+	./scripts/gen-ss-certs.sh
