@@ -10,7 +10,7 @@ const {
     DOMAIN = 'example.com'
 } = process.env;
 
-const enroll = async (channel, chaincode, fcn, args, user = 'admin', userpw = 'adminpw') => {
+const enroll = async (user = 'admin', userpw = 'adminpw') => {
     try {
         const connectionProfile = await profile();
         const appWallet = await wallet();
@@ -18,10 +18,10 @@ const enroll = async (channel, chaincode, fcn, args, user = 'admin', userpw = 'a
         // Create a new CA client for interacting with the CA.
         const caInfo = connectionProfile.certificateAuthorities[`ca.${ORG}.${DOMAIN}`];
         const caTLSCACerts = caInfo.tlsCACerts.pem;
-        const ca = new FabricCAServices(caInfo.url, { trustedRoots: caTLSCACerts, verify: false }, caInfo.caName);
+        const ca = new FabricCAServices(caInfo.url, {trustedRoots: caTLSCACerts, verify: false}, caInfo.caName);
 
         // Enroll the admin user, and import the new identity into the wallet.
-        const enrollment = await ca.enroll({ enrollmentID: user, enrollmentSecret: userpw });
+        const enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw});
         const identity = X509WalletMixin.createIdentity(`${ORG}MSP`, enrollment.certificate, enrollment.key.toBytes());
         await appWallet.import(user, identity);
         const message = 'Successfully enrolled admin user "admin" and imported it into the wallet';
