@@ -29,7 +29,9 @@ const enroll = async (user = 'admin', userpw = 'adminpw') => {
         logger.info(message);
         return {
             success: true,
-            message
+            message,
+            identity,
+            enrollment
         };
     } catch (e) {
         logger.error(e);

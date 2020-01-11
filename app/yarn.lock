@@ -5640,6 +5640,11 @@ mv@~2:
     ncp "~2.0.0"
     rimraf "~2.4.0"
 
+nan@2.12.0:
+  version "2.12.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.0.tgz#9d443fdb5e13a20770cc5e602eee59760a685885"
+  integrity sha512-zT5nC0JhbljmyEf+Z456nvm7iO7XgRV2hYxoBtPpnyp+0Q4aCoP6uWNn76v/I6k2kCYNLWqWbwBWQcjsNI/bjw==
+
 nan@^2.12.1, nan@^2.13.2, nan@^2.14.0:
   version "2.14.0"
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
@@ -8931,6 +8936,13 @@ ws@^6.1.2:
   integrity sha512-GIyAXC2cB7LjvpgMt9EKS2ldqr0MTrORaleiOno6TweZ6r3TKtoFQWay/2PceJ3RuBasOHzXNn5Lrw1X0bEjqA==
   dependencies:
     async-limiter "~1.0.0"
+
+x509@^0.3.4:
+  version "0.3.4"
+  resolved "https://registry.yarnpkg.com/x509/-/x509-0.3.4.tgz#dcfc398d95506a505d51bda8130ce07a76bc8080"
+  integrity sha512-in6y2bl0kGHDMG4rD4Zzu5UH/4wAIiTXNwlrVOhBCyDptQmUujDHy0O60y8Nalb/p4Y0nsIbg70amKrCyZC9Ew==
+  dependencies:
+    nan "2.12.0"
 
 xml-name-validator@^3.0.0:
   version "3.0.0"

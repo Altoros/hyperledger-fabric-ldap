@@ -2,6 +2,7 @@ const ldap = require('ldapjs');
 const jwt = require('jsonwebtoken');
 const ldapError = require('../tools/ldap-error');
 const {enroll} = require('../fabric/fabric-enroll-user');
+const x509 = require('x509');
 
 const {ldapConfig} = require('../helper');
 
@@ -94,15 +95,19 @@ module.exports = async (req, res) => {
             tokenMsg.force_password_change = ldapError(e).pwdMustChange;
         }
 
+        let cert;
         try {
-            await enroll(req.body.username, req.body.password)
+            const result = await enroll(req.body.username, req.body.password);
+            if (result.success && result.identity && result.enrollment) {
+                cert = x509.parseCert(result.enrollment.certificate);
+            }
         } catch (e) {
             return res.status(401).send({error: e})
         }
 
         const token = jwt.sign(tokenMsg, JWT_SECRET);
         res.cookie('jwt', token, {httpOnly: true, domain: req.hostname});
-        return res.json({jwt: token});
+        return res.json({jwt: token, cert});
     } catch (e) {
         return res.status(ldapError(e).code).send({error: ldapError(e).msg});
     }
