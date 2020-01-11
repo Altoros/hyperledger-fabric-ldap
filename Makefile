@@ -16,6 +16,8 @@ CERTIFICATE_AUTHORITIES = true
 CHANNEL_NAME = common
 CHAINCODE_NAME = ldap_demo
 IF_COUCHDB = nocouchdb
+NO_CHAINCODE = true
+
 LDAP = true
 APP = true
 
@@ -28,12 +30,15 @@ endif
 ifeq ($(CERTIFICATE_AUTHORITIES), true)
 	UP_NETWORK_OPTIONS += -a
 endif
+ifeq ($(NO_CHAINCODE), true)
+	UP_NETWORK_OPTIONS += -n
+endif
+
 ifeq ($(LDAP), true)
 	EXTERNAL_SERVICES += \
 	-f ../../fabric-ca-server/docker-compose-ca.yaml \
 	-f ../../openldap/docker-compose-ldap.yaml
 endif
-
 ifeq ($(APP), true)
 	EXTERNAL_SERVICES += \
 	-f ../../app/docker-compose-app.yaml
@@ -81,28 +86,13 @@ artifacts: ss-certs
 
 up:
 	cd $(FN_PATH) && \
-	./byfn.sh $(UP_NETWORK_OPTIONS)
-
-up-ldap:
-	docker-compose -f openldap/docker-compose-ldap.yaml up -d
-
-up-ca:
-	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
-    export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
-    export IMAGE_TAG=$(IMAGE_TAG) && \
-	docker-compose -f fabric-ca-server/docker-compose-ca.yaml up -d
-
-down-ldap:
-	docker-compose -f openldap/docker-compose-ldap.yaml down
-
-down-ca:
-	export BYFN_CA1_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org1.example.com/ca && ls *_sk) && \
-	export BYFN_CA2_PRIVATE_KEY=$$(cd $(FN_PATH)/crypto-config/peerOrganizations/org2.example.com/ca && ls *_sk) && \
-	export IMAGE_TAG=$(IMAGE_TAG) && \
-	docker-compose -f fabric-ca-server/docker-compose-ca.yaml down
+	./byfn.sh $(UP_NETWORK_OPTIONS) && \
+	docker rename ca_peerOrg1 ca.org1.example.com && \
+    docker rename ca_peerOrg2 ca.org2.example.com
 
 clean:
 	rm -rf ss-certs && \
+	rm -rf wallets && \
 	cd $(FN_PATH) && ./byfn.sh down
 
 force-clean:
@@ -112,7 +102,9 @@ force-clean:
 	docker network prune # \
 	rm -rf fabric-samples # \
 	rm bootstrap.sh # \
-	rm -rf ss-certs
+	rm -rf ss-certs # \
+	rm -rf wallets
+
 
 build-client:
 	./scripts/build-client.sh

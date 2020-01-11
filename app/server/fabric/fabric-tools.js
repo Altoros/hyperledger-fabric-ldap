@@ -6,7 +6,7 @@ const path = require('path');
 var log4js = require('log4js');
 var logger = log4js.getLogger('DEMOFabricApi-Tools');
 
-const artifacts = path.resolve(__dirname, '../../artifacts');
+const firstNetwork = path.resolve(__dirname, '../../first-network');
 
 const {
     ORG = 'example',
@@ -24,7 +24,7 @@ const options = async (identityLabel = 'User1') => {
         if (!userExists) {
             if (!useCA) {
                 // Identity to credentials to be stored in the wallet
-                const credPath = path.join(artifacts, `/crypto-config/peerOrganizations/${ORG}.${DOMAIN}/users/${identityLabel}@${ORG}.${DOMAIN}`);
+                const credPath = path.join(firstNetwork, `/crypto-config/peerOrganizations/${ORG}.${DOMAIN}/users/${identityLabel}@${ORG}.${DOMAIN}`);
                 const cert = fs.readFileSync(path.join(credPath, `/msp/signcerts/${identityLabel}@${ORG}.${DOMAIN}-cert.pem`)).toString();
                 const key = fs.readFileSync(path.join(credPath, '/msp/keystore/server.key')).toString();
                 // Load credentials into wallet
@@ -74,12 +74,17 @@ const wallet = async () => {
 
 const profile = async () => {
     try {
-        const configPath = path.join(artifacts, '/api-configs/network-config.yaml');
-        const fileContent = fs.readFileSync(configPath, 'utf8');
+        const configPath = path.join(firstNetwork, `/connection-${ORG}.json`);
+        let fileContent = fs.readFileSync(configPath, 'utf8');
+
+
+        // adjust config app host configuration
+        fileContent = fileContent.split("https://localhost:7054").join(`https://ca.org1.example.com:7054`);
+        fileContent = fileContent.split("https://localhost:8054").join(`https://ca.org2.example.com:8054`);
 
         return {
             success: true,
-            value: yaml.safeLoad(fileContent)
+            value: JSON.parse(fileContent)
         };
     } catch (e) {
         logger.error(e);
@@ -92,7 +97,7 @@ const profile = async () => {
 
 const channelsByParticipiants = async (participiants = [ORG]) => {
     try {
-        const configPath = path.join(artifacts, '/api-configs/network-config.yaml');
+        const configPath = path.join(firstNetwork, `/connection-${ORG}.yaml`);
         const fileContent = fs.readFileSync(configPath, 'utf8');
 
         const connectionProfile = yaml.safeLoad(fileContent);

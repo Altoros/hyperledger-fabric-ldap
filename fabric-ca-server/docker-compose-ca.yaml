@@ -9,9 +9,9 @@ services:
   ca0:
     volumes:
       - ../../fabric-ca-server/fabric-ca-server-config-org1.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
-    container_name: ca_peerOrg1
-
+      - ../../ss-certs/org1/ca.org1.example.com.crt:/etc/hyperledger/ldap-configs/ca.org1.example.com-cert.pem
+      - ../../ss-certs/org1/app.org1.example.com.crt:/etc/hyperledger/ldap-configs/client.org1.example.com-cert.pem
+      - ../../ss-certs/org1/app.org1.example.com.key:/etc/hyperledger/ldap-configs/client.org1.example.com-key.pem
   ca1:
     volumes:
       - ../../fabric-ca-server/fabric-ca-server-config-org2.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
-    container_name: ca_peerOrg2

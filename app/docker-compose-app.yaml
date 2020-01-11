@@ -5,15 +5,12 @@ services:
   app.org1.example.com:
     container_name: app.org1.example.com
     image: demo/app:latest
-    build:
-      dockerfile: ./Dockerfile
-      context: ../../app
     restart: always
     ports:
       - 3001:3001
     volumes:
-      - $FN_PATH/crypto-config:/app/artifacts/crypto-config
-      - $FN_PATH/connection-org1.yaml:/app/artifacts/api-configs/network-config.yaml
+      - ./:/app/first-network
+      - ../../wallets/org1:/app/wallet
       - ../../app/server:/app/server #only for quick debugging
     environment:
       ORG: org1
@@ -30,15 +27,12 @@ services:
   app.org2.example.com:
     container_name: app.org2.example.com
     image: demo/app:latest
-    build:
-      dockerfile: ./Dockerfile
-      context: ../../app
     restart: always
     ports:
       - 3002:3002
     volumes:
-      - $FN_PATH/crypto-config:/app/artifacts/crypto-config
-      - $FN_PATH/connection-org2.yaml:/app/artifacts/api-configs/network-config.yaml
+      - ./:/app/first-network
+      - ../../wallets/org2:/app/wallet
       - ../../app/server:/app/server #only for quick debugging
     environment:
       ORG: org2
