@@ -26,7 +26,7 @@ help:
 generate: artifacts build-ldap build-client
 
 bootstrap:
-	${call build_bootstrap_options} && \
+	$(eval $(call build_bootstrap_options))
 	curl -sS https://raw.githubusercontent.com/hyperledger/fabric/master/scripts/bootstrap.sh -o ./bootstrap.sh && \
 	chmod +x ./bootstrap.sh && \
 	./bootstrap.sh $(BOOTSTRAP_OPTIONS)
@@ -36,7 +36,7 @@ artifacts: ss-certs
 	echo y | ./byfn.sh generate -c $(CHANNEL_NAME)
 
 up:
-	$(call build_up_network_options) && \
+	$(eval $(call build_up_network_options))
 	cd ${FN_PATH} && \
 	echo y | ./byfn.sh ${UP_NETWORK_OPTIONS} && \
 	docker rename ca_peerOrg1 ca.org1.example.com && \
@@ -52,7 +52,7 @@ force-clean:
 	docker ps -qa | xargs docker stop # \
 	docker ps -qa | xargs docker rm # \
 	docker volume rm $$(docker volume ls -q) -f # \
-	docker network prune # \
+	echo y | docker network prune # \
 	rm -rf fabric-samples # \
 	rm bootstrap.sh # \
 	rm -rf ss-certs # \
