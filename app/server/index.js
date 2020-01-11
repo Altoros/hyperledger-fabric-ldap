@@ -6,9 +6,6 @@ const bodyParser = require('body-parser');
 
 const { checkJWT } = require('./helper');
 
-// setting for self-signed certs
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const { PORT = 3000, ORG = 'example' } = process.env;
 
 const html = require('./html');

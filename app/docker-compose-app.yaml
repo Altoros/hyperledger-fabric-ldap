@@ -21,6 +21,7 @@ services:
       PORT: 3001
       JWT_SECRET: 5agw5lmRedJ2P01ryQDB
       ENCRYPTION_KEY: sgRYjFLaqB4o6i95L6khqIveRkpZPL37
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
     networks:
       - byfn
 
@@ -43,6 +44,7 @@ services:
       PORT: 3002
       JWT_SECRET: 4HqMXDHyJeaoj0pnmkJ1
       ENCRYPTION_KEY: 42wp7IkGNY8mZBei741WXXRpzet9GaLi
+      NODE_TLS_REJECT_UNAUTHORIZED: 0
     networks:
       - byfn
 

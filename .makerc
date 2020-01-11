@@ -1,0 +1,62 @@
+#==============Export env-variables into Makefile
+export FS_PATH
+export VERSION
+export CA_VERSION
+export THIRDPARTY_IMAGE_VERSION
+export SAMPLES
+export BINARIES
+export DOCKER
+export CONSENSUS
+export VERBOSE
+export CERTIFICATE_AUTHORITIES
+export CHANNEL_NAME
+export CHAINCODE_NAME
+export IF_COUCHDB
+export NO_CHAINCODE
+export LDAP
+export APP
+export SS_DIR
+export ORGS
+export DOMAIN
+export LDAP_PREFIX
+export APP_PREFIX
+export CA_PREFIX
+
+#=============Define procedures for using in Makefile
+define build_up_network_options
+    ifeq ($(VERBOSE), true)
+        UP_NETWORK_OPTIONS += -v
+    endif
+    ifeq ($(CERTIFICATE_AUTHORITIES), true)
+        UP_NETWORK_OPTIONS += -a
+    endif
+    ifeq ($(NO_CHAINCODE), true)
+        UP_NETWORK_OPTIONS += -n
+    endif
+
+    ifeq ($(LDAP), true)
+        EXTERNAL_SERVICES += \
+        -f ../../fabric-ca-server/docker-compose-ca.yaml \
+        -f ../../openldap/docker-compose-ldap.yaml
+    endif
+    ifeq ($(APP), true)
+        EXTERNAL_SERVICES += \
+        -f ../../app/docker-compose-app.yaml
+    endif
+
+    UP_NETWORK_OPTIONS += -f \
+        "docker-compose-cli.yaml \
+        $(EXTERNAL_SERVICES)"
+endef
+
+define build_bootstrap_options
+    ifeq ($(SAMPLES), false)
+        BOOTSTRAP_OPTIONS += -s
+    endif
+    ifeq ($(BINARIES), false)
+        BOOTSTRAP_OPTIONS += -b
+    endif
+    ifeq ($(DOCKER), false)
+        BOOTSTRAP_OPTIONS += -d
+    endif
+endef
