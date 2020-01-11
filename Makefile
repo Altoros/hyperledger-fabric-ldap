@@ -14,7 +14,7 @@ CONSENSUS = solo
 VERBOSE = true
 CERTIFICATE_AUTHORITIES = true
 CHANNEL_NAME = common
-CHAINCODE_NAME = ldap_demo
+CHAINCODE_NAME = demo
 IF_COUCHDB = nocouchdb
 NO_CHAINCODE = true
 
@@ -23,7 +23,7 @@ APP = true
 
 
 UP_NETWORK_OPTIONS = up -o $(CONSENSUS) -c $(CHANNEL_NAME) -s $(IF_COUCHDB)
-EXTERNAL_SERVICES =
+EXTERNAL_SERVICES = -f ../../docker-compose-cli.yaml
 ifeq ($(VERBOSE), true)
 	UP_NETWORK_OPTIONS += -v
 endif
@@ -82,18 +82,19 @@ bootstrap:
 
 artifacts: ss-certs
 	cd $(FN_PATH) && \
-	./byfn.sh generate -c $(CHANNEL_NAME)
+	echo y | ./byfn.sh generate -c $(CHANNEL_NAME)
 
 up:
 	cd $(FN_PATH) && \
-	./byfn.sh $(UP_NETWORK_OPTIONS) && \
+	echo y | ./byfn.sh $(UP_NETWORK_OPTIONS) && \
 	docker rename ca_peerOrg1 ca.org1.example.com && \
     docker rename ca_peerOrg2 ca.org2.example.com
 
 clean:
 	rm -rf ss-certs && \
-	rm -rf wallets && \
-	cd $(FN_PATH) && ./byfn.sh down
+	sudo rm -rf wallets && \
+	cd $(FN_PATH) && \
+	echo y | ./byfn.sh down
 
 force-clean:
 	docker ps -qa | xargs docker stop # \
@@ -103,7 +104,7 @@ force-clean:
 	rm -rf fabric-samples # \
 	rm bootstrap.sh # \
 	rm -rf ss-certs # \
-	rm -rf wallets
+	sudo rm -rf wallets
 
 
 build-client:
@@ -117,3 +118,8 @@ restart-app:
 
 ss-certs:
 	./scripts/gen-ss-certs.sh
+
+demo:
+	export CHANNEL_NAME=$(CHANNEL_NAME) && \
+	export CHAINCODE_NAME=$(CHAINCODE_NAME) && \
+	./scripts/demo.sh
