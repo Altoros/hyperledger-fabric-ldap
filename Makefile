@@ -85,6 +85,8 @@ artifacts: ss-certs
 	echo y | ./byfn.sh generate -c $(CHANNEL_NAME)
 
 up:
+	export CHANNEL_NAME=$(CHANNEL_NAME) && \
+	export CHAINCODE_NAME=$(CHAINCODE_NAME) && \
 	cd $(FN_PATH) && \
 	echo y | ./byfn.sh $(UP_NETWORK_OPTIONS) && \
 	docker rename ca_peerOrg1 ca.org1.example.com && \

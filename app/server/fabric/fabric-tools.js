@@ -11,7 +11,7 @@ const firstNetwork = path.resolve(__dirname, '../../first-network');
 const {
     ORG = 'example',
     DOMAIN = 'example.com',
-    useCA = false
+    useCA = true
 } = process.env;
 
 const options = async (identityLabel = 'User1') => {

@@ -16,6 +16,7 @@ const html = require('./html');
 const loginHandler = require('./handlers/login');
 const logoutHandler = require('./handlers/logout');
 const changePasswordHandler = require('./handlers/change-password');
+const demoHandlers = require('./handlers/demo');
 
 const retry = async (method, n) => {
   try {
@@ -73,6 +74,16 @@ const init = async () => {
 
   router.post('/api/changePassword', changePasswordHandler);
 
+  demoHandlers.forEach(route => {
+    router[route.method](route.path, async (req, res) => {
+      try {
+        const data = await route.handler(req, res);
+        res.status(200).send({ ok: true, data });
+      } catch (e) {
+        res.status(400).send({ error: e.message });
+      }
+    });
+  });
 
   router.use('*', renderer);
   app.use(router);
