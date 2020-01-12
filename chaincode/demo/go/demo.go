@@ -58,12 +58,20 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 	fmt.Println("abac Invoke")
 	function, args := stub.GetFunctionAndParameters()
 
-	attrVal, found, err := cid.GetAttributeValue(stub, "mail")
-	if err != nil {
-		return shim.Error("Cannot get attribute value from x509 certificate")
+	if val, found, err := cid.GetAttributeValue(stub, "mail"); err == nil && found {
+		fmt.Println("Received custom field")
+		fmt.Println(val)
 	}
-	if found {
-		fmt.Println(attrVal)
+
+	if id, err := cid.GetMSPID(stub); err == nil {
+		fmt.Println("Received MSPID")
+		fmt.Println(id)
+	}
+
+	if crt, err := cid.GetX509Certificate(stub); err == nil {
+		fmt.Println("Received Subject from X509Certificate")
+
+		fmt.Println(crt.Subject)
 	}
 
 	if function == "invoke" {

@@ -1,0 +1,18 @@
+# User account
+dn: uid=aliaksandr,ou=users,ou=fabric,dc=hyperledeger,dc=example,dc=com
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: inetOrgPerson
+uid: aliaksandr
+cn: admin
+sn: Hyperledeger
+givenName: aliaksandr
+o: Hyperledger
+ou: Fabric
+st: North Carolina
+uidNumber: 10002
+gidNumber: 10002
+mail: aliaksandr@hyperledeger.example.com
+loginShell: /bin/bash
+homeDirectory: /home/aliaksandr
+userPassword: aliaksandrpw

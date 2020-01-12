@@ -8,6 +8,7 @@ const {X509WalletMixin} = require('fabric-network');
 
 const {
     ORG = 'example',
+    MSPID,
     DOMAIN = 'example.com'
 } = process.env;
 
@@ -23,7 +24,7 @@ const enroll = async (user = 'admin', userpw = 'adminpw') => {
 
         // Enroll the admin user, and import the new identity into the wallet.
         const enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw});
-        const identity = X509WalletMixin.createIdentity(`${ORG}MSP`, enrollment.certificate, enrollment.key.toBytes());
+        const identity = X509WalletMixin.createIdentity(`${MSPID}`, enrollment.certificate, enrollment.key.toBytes());
         await appWallet.value.wallet.import(user, identity);
         const message = `Successfully enrolled user "${user}" and imported it into the wallet`;
         logger.info(message);

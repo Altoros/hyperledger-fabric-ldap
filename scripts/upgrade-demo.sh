@@ -54,7 +54,7 @@ docker exec \
   cli \
   peer chaincode install \
     -n ${CHAINCODE_NAME} \
-    -v 1.0 \
+    -v ${CHAINCODE_VERSION} \
     -p "$CC_SRC_PATH" \
     -l "$CC_RUNTIME_LANGUAGE"
 
@@ -67,21 +67,21 @@ docker exec \
   cli \
   peer chaincode install \
     -n ${CHAINCODE_NAME} \
-    -v 1.0 \
+    -v ${CHAINCODE_VERSION} \
     -p "$CC_SRC_PATH" \
     -l "$CC_RUNTIME_LANGUAGE"
 
-echo "Instantiating smart contract on ${CHANNEL_NAME}"
+echo "Upgrading smart contract on ${CHANNEL_NAME}"
 docker exec \
   -e CORE_PEER_LOCALMSPID=Org1MSP \
   -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
   cli \
-  peer chaincode instantiate \
+  peer chaincode upgrade \
     -o orderer.example.com:7050 \
     -C ${CHANNEL_NAME} \
     -n ${CHAINCODE_NAME} \
     -l "$CC_RUNTIME_LANGUAGE" \
-    -v 1.0 \
+    -v ${CHAINCODE_VERSION} \
     -c '{"Args":["init","a","200","b","200"]}' \
     -P "AND('Org1MSP.member','Org2MSP.member')" \
     --tls \

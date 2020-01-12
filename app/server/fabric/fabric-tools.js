@@ -11,7 +11,8 @@ const firstNetwork = path.resolve(__dirname, '../../first-network');
 const {
     ORG = 'example',
     DOMAIN = 'example.com',
-    useCA = true
+    MSPID,
+    USE_CA = 1
 } = process.env;
 
 const options = async (identityLabel = 'User1') => {
@@ -22,13 +23,13 @@ const options = async (identityLabel = 'User1') => {
         // Check to see if we've already imported the identity.
         const userExists = await wallet.exists(identityLabel);
         if (!userExists) {
-            if (!useCA) {
+            if (!USE_CA) {
                 // Identity to credentials to be stored in the wallet
                 const credPath = path.join(firstNetwork, `/crypto-config/peerOrganizations/${ORG}.${DOMAIN}/users/${identityLabel}@${ORG}.${DOMAIN}`);
                 const cert = fs.readFileSync(path.join(credPath, `/msp/signcerts/${identityLabel}@${ORG}.${DOMAIN}-cert.pem`)).toString();
                 const key = fs.readFileSync(path.join(credPath, '/msp/keystore/server.key')).toString();
                 // Load credentials into wallet
-                const identity = X509WalletMixin.createIdentity(`${ORG}MSP`, cert, key);
+                const identity = X509WalletMixin.createIdentity(`${MS}`, cert, key);
                 await wallet.import(identityLabel, identity);
             } else {
                 const message = `An identity for the user "${identityLabel}" does not exist in the wallet`;
@@ -40,7 +41,7 @@ const options = async (identityLabel = 'User1') => {
             value: {
                 identity: identityLabel,
                 wallet,
-                discovery: {enabled: true, asLocalhost: true}
+                discovery: {enabled: true, asLocalhost: false}
             }
         };
     } catch (e) {
@@ -79,8 +80,14 @@ const profile = async () => {
 
 
         // adjust config app host configuration
-        fileContent = fileContent.split("https://localhost:7054").join(`https://ca.org1.example.com:7054`);
-        fileContent = fileContent.split("https://localhost:8054").join(`https://ca.org2.example.com:8054`);
+        //ca
+        fileContent = fileContent.split("localhost:7054").join(`ca.org1.example.com:7054`);
+        fileContent = fileContent.split("localhost:8054").join(`ca.org2.example.com:8054`);
+        //peer
+        fileContent = fileContent.split("localhost:7051").join(`peer0.org1.example.com:7051`);
+        fileContent = fileContent.split("localhost:8051").join(`peer1.org1.example.com:8051`);
+        fileContent = fileContent.split("localhost:9051").join(`peer0.org2.example.com:9051`);
+        fileContent = fileContent.split("localhost:10051").join(`peer1.org2.example.com:10051`);
 
         return {
             success: true,

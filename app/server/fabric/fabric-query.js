@@ -18,7 +18,6 @@ const query = async (channel, chaincode, fcn, args, user = 'admin') => {
             await gateway.connect(connectionProfile.value, connectionOptions.value);
         }
 
-        logger.debug(gateway);
         const network = await gateway.getNetwork(channel);
         const contract = await network.getContract(chaincode, '');
 

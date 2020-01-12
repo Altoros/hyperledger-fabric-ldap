@@ -36,7 +36,7 @@ services:
       - ../../ss-certs/org1/ldap.org1.example.com.key:/container/service/slapd/assets/certs/ldap.key
       - ../../ss-certs/org1/ldap.org1.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
       - ../../ss-certs/org1/ca.org1.example.com.crt:/container/service/slapd/assets/certs/ca.crt
-      - ../../openldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ../../openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
       - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:
@@ -76,7 +76,7 @@ services:
       - ../../ss-certs/org2/ldap.org2.example.com.key:/container/service/slapd/assets/certs/ldap.key
       - ../../ss-certs/org2/ldap.org2.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
       - ../../ss-certs/org2/ca.org2.example.com.crt:/container/service/slapd/assets/certs/ca.crt
-      - ../../openldap/ldif:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - ../../openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
       - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:

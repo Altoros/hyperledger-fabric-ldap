@@ -22,10 +22,9 @@ const invoke = async (channel, chaincode, fcn, args, user = 'admin') => {
         const contract = await network.getContract(chaincode, '');
 
         logger.debug('Submit transaction.');
-        args = JSON.parse(args); // validation JSON before making invoke
 
         const transaction = contract.createTransaction(fcn);
-        await transaction.submit(JSON.stringify(args));
+        await transaction.submit(...args);
 
         await transaction.addCommitListener((err, id, status, blockNumber) => {
             if (err) {

@@ -6,11 +6,10 @@
 -include .makerc
 
 FN_PATH = ${FS_PATH}/fabric-samples/first-network
-
 UP_NETWORK_OPTIONS = up -o ${CONSENSUS} -c ${CHANNEL_NAME} -s ${IF_COUCHDB}
 EXTERNAL_SERVICES = -f ../../docker-compose-cli.yaml
-
 BOOTSTRAP_OPTIONS = ${VERSION} ${CA_VERSION} ${THIRDPARTY_IMAGE_VERSION}
+v = ${CHAINCODE_VERSION}
 
 help:
 	@echo "LDAP Integration Simple Demo"
@@ -71,5 +70,10 @@ restart-app:
 ss-certs:
 	./scripts/gen-ss-certs.sh
 
-demo:
-	./scripts/demo.sh
+install-demo:
+	export CHAINCODE_VERSION=${v} && \
+	./scripts/install-demo.sh
+
+upgrade-demo:
+	export CHAINCODE_VERSION=${v} && \
+	./scripts/upgrade-demo.sh

@@ -22,7 +22,8 @@ export LDAP_PREFIX
 export APP_PREFIX
 export CA_PREFIX
 
-#=============Define procedures for using in Makefile
+#=============Define functions for using in Makefile
+#=============Building options for up BYFN using set parameters
 define build_up_network_options
     -include .env
     ifeq ($(VERBOSE), true)
@@ -50,6 +51,7 @@ define build_up_network_options
         $$(EXTERNAL_SERVICES)"
 endef
 
+#=============Building options for bootstrapping HLF sources using set parameters
 define build_bootstrap_options
     ifeq ($(SAMPLES), false)
         BOOTSTRAP_OPTIONS += -s

@@ -14,6 +14,8 @@ services:
       - ../../app/server:/app/server #only for quick debugging
     environment:
       ORG: org1
+      MSPID: Org1MSP
+      USE_CA: 1
       DOMAIN: example.com
       LDAP_HOST: ldap.org1.example.com
       DEFAULT_HLF_CHANNEL: $CHANNEL_NAME
@@ -37,6 +39,8 @@ services:
       - ../../app/server:/app/server #only for quick debugging
     environment:
       ORG: org2
+      MSPID: Org2MSP
+      USE_CA: 1
       DOMAIN: example.com
       LDAP_HOST: ldap.org2.example.com
       DEFAULT_HLF_CHANNEL: $CHANNEL_NAME

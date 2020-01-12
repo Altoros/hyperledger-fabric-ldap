@@ -33,10 +33,7 @@ const methods = [
         method: 'post',
         path: '/api/invoke',
         handler: async req => {
-            const {a, b, val} = req.body;
-
-            const fcn = 'invoke';
-            const args = [JSON.stringify({a, b, val})];
+            const {fcn, args} = req.body;
             const user = req.user.user_info.full_name;
             const result = await invoke(
                 DEFAULT_HLF_CHANNEL,
