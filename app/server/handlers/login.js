@@ -100,6 +100,7 @@ module.exports = async (req, res) => {
             const result = await enroll(req.body.username, req.body.password);
             if (result.success && result.identity && result.enrollment) {
                 cert = x509.parseCert(result.enrollment.certificate);
+                tokenMsg.user_info.cert = cert;
             }
         } catch (e) {
             return res.status(401).send({error: e})
@@ -107,7 +108,7 @@ module.exports = async (req, res) => {
 
         const token = jwt.sign(tokenMsg, JWT_SECRET);
         res.cookie('jwt', token, {httpOnly: true, domain: req.hostname});
-        return res.json({jwt: token, cert});
+        return res.json({jwt: token});
     } catch (e) {
         return res.status(ldapError(e).code).send({error: ldapError(e).msg});
     }
