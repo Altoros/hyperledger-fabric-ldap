@@ -1,5 +1,8 @@
 version: '2'
 
+networks:
+  byfn:
+
 services:
 
   app.org1.example.com:
@@ -9,9 +12,9 @@ services:
     ports:
       - 3001:3001
     volumes:
-      - ./:/app/first-network
-      - ../../wallets/org1:/app/wallet
-      - ../../app/server:/app/server #only for quick debugging
+      - $PROJECT_PATH/$FN_PATH/:/app/first-network
+      - $PROJECT_PATH/wallet/org1:/app/wallet
+      - $PROJECT_PATH/app/server:/app/server #only for quick debugging
     environment:
       ORG: org1
       MSPID: Org1MSP
@@ -34,9 +37,9 @@ services:
     ports:
       - 3002:3002
     volumes:
-      - ./:/app/first-network
-      - ../../wallets/org2:/app/wallet
-      - ../../app/server:/app/server #only for quick debugging
+      - $PROJECT_PATH/$FN_PATH:/app/first-network
+      - $PROJECT_PATH/wallet/org2:/app/wallet
+      - $PROJECT_PATH/app/server:/app/server #only for quick debugging
     environment:
       ORG: org2
       MSPID: Org2MSP

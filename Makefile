@@ -1,11 +1,12 @@
 .PHONY: bootstrap
 .PHONY: all generate artifacts build-client build-ldap up ss-certs restart install-cc upgrade-cc
-.PHONY: clean force-clean
+.PHONY: clean force-clean restart-app force-restart-app
 
 -include .env
 -include .makerc
 
-FN_PATH = ${FS_PATH}/fabric-samples/first-network
+FN_PATH = fabric-samples/first-network
+PROJECT_PATH = ${CURDIR}
 UP_NETWORK_OPTIONS = up -o ${CONSENSUS} -c ${CHANNEL_NAME} -s ${IF_COUCHDB}
 EXTERNAL_SERVICES = -f ../../docker-compose-cli.yaml
 BOOTSTRAP_OPTIONS = ${VERSION} ${CA_VERSION} ${THIRDPARTY_IMAGE_VERSION}
@@ -29,6 +30,7 @@ help:
 	@echo "force-clean: remove docker containers, volumes, self-signed certs, wallets, networks and downloads"
 	@echo "restart: clean all the HLF Network artifacts and run bringing up process again"
 	@echo "restart-app: restart only Web-client's docker containers"
+	@echo "force-restart-app: restart only Web-client's docker containers with rebuild Web-client"
 
 all: generate up install-cc restart-app
 
@@ -75,6 +77,14 @@ build-client:
 
 build-ldap:
 	./scripts/build-ldap.sh
+
+force-restart-app: build-client
+	$(eval $(call build_up_network_options))
+	docker stop app.org1.example.com app.org2.example.com # \
+	docker rm app.org1.example.com app.org2.example.com # \
+	docker-compose -f ./app/docker-compose-app.yaml up -d # \
+	docker network connect net_byfn app.org1.example.com # \
+	docker network connect net_byfn app.org2.example.com
 
 restart-app:
 	docker restart app.org1.example.com app.org2.example.com

@@ -25,7 +25,8 @@ export CA_PREFIX
 #=============Define functions for using in Makefile
 #=============Building options for up BYFN using set parameters
 define build_up_network_options
-    -include .env
+    export FN_PATH
+    export PROJECT_PATH
     ifeq ($(VERBOSE), true)
         UP_NETWORK_OPTIONS += -v
     endif

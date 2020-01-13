@@ -8,8 +8,7 @@ import withBreadcrumbs from 'react-router-breadcrumbs-hoc';
 import Login from './Login';
 
 import { AuthContext } from './context/auth';
-import Guarantees from './containers/Guarantees';
-import GuaranteeDetail from './containers/GuaranteeDetail';
+import Dashboard from './containers/Dashboard';
 
 import Header from './components/Header/Header';
 
@@ -62,11 +61,11 @@ const App = ({ breadcrumbs }) => {
             <Route
               exact
               path="/drafts/add"
-              component={() => <AddGuarantee issuer={org} />}
+              // component={() => <AddGuarantee issuer={org} />}
             />
-            <Route exact path="/drafts" component={Guarantees} />
+            <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/profile" component={Profile} />
-            <Redirect from="*" to="/drafts" />
+            <Redirect from="*" to="/dashboard" />
           </Switch>
         </Container>
       </Container>

@@ -8,6 +8,11 @@ const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
 const x509 = require('x509');
+const {folders} = require('../helper');
+
+const {
+    ORG = 'example',
+} = process.env;
 
 const methods = [
     {
@@ -30,6 +35,17 @@ const methods = [
                 throw new Error(result.message);
             }
             return JSON.parse(result.message);
+        }
+    },
+    {
+        method: 'get',
+        path: '/api/certs',
+        handler: async req => {
+            const walletPath = path.join(process.cwd(), 'wallet');
+            const identityFolders = await folders(walletPath);
+            console.log(identityFolders);
+
+            return JSON.parse(identityFolders);
         }
     },
     {
@@ -56,7 +72,6 @@ const methods = [
         path: '/api/enroll',
         handler: async req => {
             const {username, password} = req.body;
-            const user = req.user.user_info.full_name;
             let cert;
             const result = await enroll(username, password);
             if (result.success && result.identity && result.enrollment) {

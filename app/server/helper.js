@@ -59,4 +59,16 @@ const checkJWT = async ({cookies, hostname}, res) => {
     }
 };
 
-module.exports = {ldapConfig, checkJWT, defaultAttrs};
+const folders = async function getFolders(path) {
+    let result = Array();
+    let files = await fs.readdir(path);
+    for (let i = 0; i < files.length; i++) {
+        var filePath = path + '/' + file;
+        if (await fs.stat(filePath).isDirectory()) {
+            result.push(filePath);
+        }
+    }
+    return result;
+};
+
+module.exports = {ldapConfig, checkJWT, defaultAttrs, folders};

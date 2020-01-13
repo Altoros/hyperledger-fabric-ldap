@@ -29,7 +29,7 @@ const getDefaultFilterByRole = roles => {
   return [];
 };
 
-const Guarantees = ({ match }) => {
+const Dashboard = ({ match }) => {
   const type = match.path.slice(1);
 
   const tabs = {
@@ -155,4 +155,4 @@ const Guarantees = ({ match }) => {
   );
 };
 
-export default withRouter(props => <Guarantees {...props} />);
+export default withRouter(props => <Dashboard {...props} />);

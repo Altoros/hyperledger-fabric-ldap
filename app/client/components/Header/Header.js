@@ -4,14 +4,12 @@ import { withRouter, Link } from 'react-router-dom';
 import { Button, Menu, Label, Popup } from 'semantic-ui-react';
 
 import { AuthContext } from '../../context/auth';
-import { ROLES } from '../../constants';
 
 import logo from '../../logo.png';
 
 const Header = ({ history }) => {
   const { isAuth, user, logout } = useContext(AuthContext);
-  const roles = user.user_info.roles.map(i => ROLES[i]);
-
+  const groups = user.user_info.groups;
   if (!isAuth) {
     return <></>;
   }
@@ -33,7 +31,7 @@ const Header = ({ history }) => {
         ) : (
           <>
             <Menu.Item>
-              {roles.length ? <p>Роль: {roles.join(', ')}</p> : <></>}
+              {groups.length ? <p>LDAP Groups: {groups.join(', ')}</p> : <></>}
             </Menu.Item>
 
             <Menu.Item as={Link} to="/profile">
@@ -41,7 +39,7 @@ const Header = ({ history }) => {
                 {user.user_info.full_name}
                 {user.force_password_change ? (
                   <Popup
-                    content="Необходимо сменить пароль"
+                    content="You must change password"
                     trigger={
                       <div
                         style={{
@@ -66,7 +64,7 @@ const Header = ({ history }) => {
                   history.push('/');
                 }}
               >
-                Выйти
+                Logout
               </Button>
             </Menu.Item>
           </>

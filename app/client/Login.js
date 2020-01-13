@@ -28,14 +28,14 @@ function Login({ login }) {
         <Form>
           <Form.Group widths="equal">
             <Form.Field>
-              <label>Имя пользователя</label>
+              <label>Username</label>
               <Input
                 ref={inputRef}
                 onChange={(_, { value }) => {
                   setUsername(value);
                 }}
                 value={username}
-                placeholder="Имя пользователя"
+                placeholder="Username"
                 fluid
               />
             </Form.Field>
@@ -43,8 +43,8 @@ function Login({ login }) {
           <Form.Group widths="equal">
             <Form.Input
               fluid
-              label="Пароль"
-              placeholder="Пароль"
+              label="Password"
+              placeholder="Password"
               type="password"
               value={password}
               onChange={(_, { value }) => {
@@ -80,7 +80,7 @@ function Login({ login }) {
               }
             }}
           >
-            Войти
+            Login
           </Button>
         </Form>
       </div>
