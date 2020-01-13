@@ -1,5 +1,5 @@
 .PHONY: bootstrap
-.PHONY: generate artifacts build-client build-ldap up ss-certs
+.PHONY: all generate artifacts build-client build-ldap up ss-certs restart install-cc upgrade-cc
 .PHONY: clean force-clean
 
 -include .env
@@ -14,13 +14,25 @@ v = ${CHAINCODE_VERSION}
 help:
 	@echo "LDAP Integration Simple Demo"
 	@echo ""
+	@echo "all: run full scenario including generate certs, bring up the HLF network and istall smart-contracts"
 	@echo "generate: generate artifacts with crypto material, configs and docker-compose templates"
-	@echo "          build API and web client"
-	@echo "up: bring up the network"
-	@echo "clean: remove docker containers and volumes"
-	@echo "build-client: build web client (building occurs inside docker container, no Node dependency)"
-	@echo ""
+	@echo "          build LDAP-server and Web-client"
+	@echo "		     generate self-signed certificates"
+	@echo "build-client: build Web-client (building occurs inside docker container, no Node dependency)"
+	@echo "build-ldap: build LDAP-server"
+	@echo "artifacts: generate all the HLF Network's artifacts"
+	@echo "ss-certs: generate self-signed certificates, which are used for TLS connection to LDAP-server"
+	@echo "up: bring up the HLF network with external services"
+	@echo "install-cc: install and instantiate smart contract"
+	@echo "upgrade-cc v=2.0: upgrade smart contract to new version, e.g. v=2.0"
+	@echo "clean: remove docker containers, volumes, self-signed certs and wallets"
+	@echo "force-clean: remove docker containers, volumes, self-signed certs, wallets, networks and downloads"
+	@echo "restart: clean all the HLF Network artifacts and run bringing up process again"
+	@echo "restart-app: restart only Web-client's docker containers"
 
+all: generate up install-cc restart-app
+
+restart: clean all
 
 generate: artifacts build-ldap build-client
 
@@ -70,10 +82,10 @@ restart-app:
 ss-certs:
 	./scripts/gen-ss-certs.sh
 
-install-demo:
+install-cc:
 	export CHAINCODE_VERSION=${v} && \
 	./scripts/install-demo.sh
 
-upgrade-demo:
+upgrade-cc:
 	export CHAINCODE_VERSION=${v} && \
 	./scripts/upgrade-demo.sh

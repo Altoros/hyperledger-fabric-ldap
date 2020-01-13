@@ -27,9 +27,12 @@ const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs) 
         let enrollment;
         let ca;
         let message;
+        attrs = attrs.map((i) => {
+            return {name: i}
+        });
         if (!userExists) {
             ca = new FabricCAServices(caInfo.url, {trustedRoots: caTLSCACerts, verify: false}, caInfo.caName);
-            enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw});
+            enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw, attr_reqs: attrs});
             message = `Successfully enrolled user "${user}" and imported it into the wallet`;
         } else {
             const connectionOptions = await options(user);
@@ -40,9 +43,6 @@ const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs) 
             }
             ca = gateway.getClient().getCertificateAuthority();
             const currentIdentity = gateway.getCurrentIdentity();
-            attrs = attrs.map((i) => {
-                return {name: i}
-            });
             enrollment = await ca.reenroll(currentIdentity, attrs);
             message = `Successfully enrolled user "${user}" and imported it into the wallet`;
         }
