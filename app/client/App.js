@@ -12,7 +12,6 @@ import Dashboard from './containers/Dashboard';
 
 import Header from './components/Header/Header';
 
-import AddGuarantee from './components/AddGuarantee/AddGuarantee';
 import Profile from './containers/Profile';
 
 import 'semantic-ui-css/semantic.min.css';
@@ -21,18 +20,18 @@ import './styles.css';
 
 const App = ({ breadcrumbs }) => {
   const { isAuth, login, org } = useContext(AuthContext);
-  const sections = breadcrumbs.map(({ match, breadcrumb }, idx) => {
-    const lastBreadcrumb = breadcrumbs.length - 1 === idx;
-    return {
-      key: `breadcrumb-${idx}`,
-      content: lastBreadcrumb ? (
-        <>{breadcrumb}</>
-      ) : (
-        <Link to={match.url}>{breadcrumb}</Link>
-      ),
-      active: lastBreadcrumb
-    };
-  });
+  // const sections = breadcrumbs.map(({ match, breadcrumb }, idx) => {
+  //   const lastBreadcrumb = breadcrumbs.length - 1 === idx;
+  //   return {
+  //     key: `breadcrumb-${idx}`,
+  //     content: lastBreadcrumb ? (
+  //       <>{breadcrumb}</>
+  //     ) : (
+  //       <Link to={match.url}>{breadcrumb}</Link>
+  //     ),
+  //     active: lastBreadcrumb
+  //   };
+  // });
 
   if (!isAuth) {
     return <Login login={login} />;
@@ -43,9 +42,9 @@ const App = ({ breadcrumbs }) => {
       <div className="no-print">
         <>
           <Header />
-          <Container>
-            <Breadcrumb divider="/" sections={sections} />
-          </Container>
+          {/*<Container>*/}
+          {/*  <Breadcrumb divider="/" sections={sections} />*/}
+          {/*</Container>*/}
         </>
       </div>
 
@@ -58,11 +57,6 @@ const App = ({ breadcrumbs }) => {
       >
         <Container>
           <Switch>
-            <Route
-              exact
-              path="/drafts/add"
-              // component={() => <AddGuarantee issuer={org} />}
-            />
             <Route exact path="/dashboard" component={Dashboard} />
             <Route exact path="/profile" component={Profile} />
             <Redirect from="*" to="/dashboard" />

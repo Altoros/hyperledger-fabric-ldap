@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const { checkJWT } = require('./helper');
 
-const { PORT = 3000, ORG = 'example' } = process.env;
+const { PORT = 3000, ORG = 'example', NODE_ENV = 'development' } = process.env;
 
 const html = require('./html');
 
@@ -87,6 +87,7 @@ const init = async () => {
 
   app.listen(PORT, () => {
     console.info(`listening on port: ${PORT}`);
+    console.info(`server is running in ${NODE_ENV} mode`)
   });
 };
 

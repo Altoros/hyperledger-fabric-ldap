@@ -5,69 +5,75 @@ const {enroll} = require('../fabric/fabric-enroll-user');
 
 const {ldapConfig} = require('../helper');
 
-const {JWT_SECRET = 'example_secret', ORG = 'example'} = process.env;
+const {JWT_SECRET = 'example_secret', ORG = 'example', NODE_ENV = 'development'} = process.env;
 
 const {encrypt} = require('../tools/encryption');
 
 const authenticate = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        ldapClient.bind(
-            `uid=${userId},${ldapConfig.bindDn}`,
-            password,
-            (err, res) => {
-                if (err) {
-                    // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
-                    return reject(err);
+        if (NODE_ENV === 'production') {
+            ldapClient.bind(
+                `uid=${userId},${ldapConfig.bindDn}`,
+                password,
+                (err, res) => {
+                    if (err) {
+                        // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
+                        return reject(err);
+                    }
+                    ldapClient.unbind();
+                    resolve(res);
                 }
-                ldapClient.unbind();
-                resolve(res);
-            }
-        );
+            );
+        }
+        resolve()
     });
 
 const userLdapInfo = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        ldapClient.bind(
-            `${ldapConfig.adminDn}`,
-            `${ldapConfig.adminPw}`,
-            (err, res) => {
-                if (err) {
-                    // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
-                    return reject(err);
-                }
-                const options = {
-                    scope: 'sub',
-                    filter: `(&(objectclass=groupOfNames)(member=uid=${userId},${ldapConfig.bindDn}))`
-                };
-                ldapClient.search(ldapConfig.baseDn, options, (err, res) => {
+        if (NODE_ENV === 'production') {
+            ldapClient.bind(
+                `${ldapConfig.adminDn}`,
+                `${ldapConfig.adminPw}`,
+                (err, res) => {
                     if (err) {
+                        // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
                         return reject(err);
                     }
-                    const entries = [];
-                    res.on('searchEntry', entry => {
-                        const r = entry.object;
-                        entries.push(r);
-                    });
-
-                    res.on('error', err => {
-                        reject(err);
-                    });
-
-                    res.on('end', () => {
-                        ldapClient.unbind();
-                        const user_info = {};
-                        user_info.full_name = userId;
-                        user_info.groups = [];
-                        entries.forEach(group => {
-                            user_info.groups.push(group.cn);
+                    const options = {
+                        scope: 'sub',
+                        filter: `(&(objectclass=groupOfNames)(member=uid=${userId},${ldapConfig.bindDn}))`
+                    };
+                    ldapClient.search(ldapConfig.baseDn, options, (err, res) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        const entries = [];
+                        res.on('searchEntry', entry => {
+                            const r = entry.object;
+                            entries.push(r);
                         });
-                        resolve(user_info);
+
+                        res.on('error', err => {
+                            reject(err);
+                        });
+
+                        res.on('end', () => {
+                            ldapClient.unbind();
+                            const user_info = {};
+                            user_info.full_name = userId;
+                            user_info.groups = [];
+                            entries.forEach(group => {
+                                user_info.groups.push(group.cn);
+                            });
+                            resolve(user_info);
+                        });
                     });
-                });
-            }
-        );
+                }
+            );
+        }
+        resolve()
     });
 
 module.exports = async (req, res) => {
@@ -89,13 +95,13 @@ module.exports = async (req, res) => {
         };
         try {
             const userInfo = await userLdapInfo(req.body.username, req.body.password);
-            tokenMsg.user_info.groups = userInfo.groups;
+            tokenMsg.user_info.groups = userInfo.groups ? userInfo.groups : [];
         } catch (e) {
             tokenMsg.force_password_change = ldapError(e).pwdMustChange;
         }
 
         try {
-            await enroll(req.body.username, req.body.password);
+            if (NODE_ENV === 'production') await enroll(req.body.username, req.body.password);
         } catch (e) {
             return res.status(401).send({error: e})
         }
