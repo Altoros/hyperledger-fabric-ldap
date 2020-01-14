@@ -2,17 +2,15 @@ const {DEFAULT_HLF_CHANNEL, DEFAULT_HLF_CHAINCODE} = process.env;
 const path = require('path');
 const fs = require('fs');
 
-// setting for self-signed certs
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const {invoke} = require('../fabric/fabric-invoke');
 const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
 const {listDirectory} = require('../helper');
+const {fakeIdentities} = require('../fakeData');
 
 const {
-    ORG = 'example',
+    ORG = 'example', NODE_ENV = 'development'
 } = process.env;
 
 const methods = [
@@ -43,17 +41,36 @@ const methods = [
         path: '/api/identities',
         handler: async req => {
             const walletPath = path.join(process.cwd(), 'wallet');
-            let identityLabels;
-            let identities = [];
-            try {
-                identityLabels = await listDirectory(walletPath);
-            } catch (e) {
-                throw e;
-            }
-            for (label of identityLabels) {
-                let name = path.basename(label);
-                let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
-                identities.push(identity);
+            let fullListIdentities = [];
+            let listIdentities = [];
+            let listOrgs;
+            let identities = fakeIdentities;
+            if(NODE_ENV === 'production') {
+                identities = [];
+                try {
+                    listOrgs = await listDirectory(walletPath);
+                    console.info("List orgs:");
+                    console.log(listOrgs);
+                } catch (e) {
+                    throw e;
+                }
+                for(org of listOrgs) {
+                    try {
+                        listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                        console.info("List identities:");
+                        console.log(listIdentities);
+                    } catch (e) {
+                        throw e;
+                    }
+                    fullListIdentities.push(...listIdentities)
+                }
+                console.info("Full list identities:");
+                console.log(fullListIdentities);
+                for (label of fullListIdentities) {
+                    let name = path.basename(label);
+                    let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                    identities.push(identity);
+                }
             }
             return identities;
         }

@@ -17,7 +17,7 @@ const {
 
 const options = async (identityLabel = 'User1') => {
     try {
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet', ORG);
         const wallet = new FileSystemWallet(walletPath);
         logger.debug(`Wallet path: ${walletPath}`);
         // Check to see if we've already imported the identity.
@@ -55,7 +55,7 @@ const options = async (identityLabel = 'User1') => {
 
 const wallet = async () => {
     try {
-        const walletPath = path.join(process.cwd(), 'wallet');
+        const walletPath = path.join(process.cwd(), 'wallet', ORG);
         const wallet = new FileSystemWallet(walletPath);
         logger.debug(`Wallet path: ${walletPath}`);
         return {

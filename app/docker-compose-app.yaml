@@ -13,7 +13,7 @@ services:
       - 3001:3001
     volumes:
       - $PROJECT_PATH/$FN_PATH/:/app/first-network
-      - $PROJECT_PATH/wallet/org1:/app/wallet
+      - $PROJECT_PATH/wallet:/app/wallet
       - $PROJECT_PATH/app/server:/app/server #only for quick debugging
     environment:
       ORG: org1
@@ -38,7 +38,7 @@ services:
       - 3002:3002
     volumes:
       - $PROJECT_PATH/$FN_PATH:/app/first-network
-      - $PROJECT_PATH/wallet/org2:/app/wallet
+      - $PROJECT_PATH/wallet:/app/wallet
       - $PROJECT_PATH/app/server:/app/server #only for quick debugging
     environment:
       ORG: org2

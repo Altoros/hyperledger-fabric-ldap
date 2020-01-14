@@ -1,99 +1,3 @@
-export const GUARANTEE_STATUS = {
-  0: 'Черновик',
-  1: 'Ожидает подтверждения',
-  2: 'Подтверждено',
-  3: 'Подписана',
-  4: 'Выпущена',
-  5: 'Черновик закрытия',
-  6: 'Закрыта к подтверждению',
-  7: 'Закрыта к подписанию',
-  8: 'Подписана к отправке',
-  9: 'Закрыта'
-};
-
-export const GUARANTEE_TYPE = {
-  0: 'Прямая гарантия',
-  1: 'Контр-гарантия',
-  2: 'Гарантия с контр-гарантией'
-};
-
-export const CLOSURE_STATUS = {
-  '0': 'Без предъявления требования',
-  '1': 'Осуществлена оплата',
-  '2': 'Отказано в оплате'
-};
-
-export const INPUT_FIELDS = {
-  GUARANTEE: [
-    '_id',
-    'type',
-    'issuer',
-    'receiver',
-    'beneficiary',
-    'status',
-    'applicable_rules',
-    'details_of_guarantee',
-    'details_of_guarantee_additional_1',
-    'details_of_guarantee_additional_2',
-    'sender_to_receiver_information',
-    'date_of_issue',
-    'date_of_expiration',
-    'date_of_closure',
-    'comment_to_closure',
-    'closure_status',
-    'sent_to_confirm_by',
-    'confirmed_by',
-    'signed_by',
-    'last_updated'
-  ],
-  CHANGE_PASSWORD: [
-    {
-      field: 'currentPassword',
-      props: {
-        type: 'password',
-        label: 'Текущий пароль',
-        placeholder: 'Введите текущий пароль'
-      }
-    },
-    {
-      field: 'newPassword',
-      props: {
-        type: 'password',
-        label: 'Новый пароль',
-        placeholder: 'Ввведите новый пароль'
-      }
-    },
-    {
-      field: 'newPasswordRepeat',
-      props: {
-        type: 'password',
-        label: 'Повторите новый пароль',
-        placeholder: 'Ввведите новый пароль еще раз'
-      }
-    }
-  ]
-};
-
-export const ROLES = {
-  Confirm: 'Подтверждение',
-  View: 'Просмотр',
-  Execute: 'Исполнитель',
-  Send: 'Отправка'
-};
-
-export const STATUS_TO_ICON = {
-  0: ['firstdraft'],
-  1: ['firstdraft', 'wait'],
-  2: ['firstdraft', 'checkmark'],
-  3: ['firstdraft', 'signup'],
-  4: ['chain', 'paper plane outline'],
-  5: ['firstdraft'],
-  6: ['firstdraft', 'wait'],
-  7: ['firstdraft', 'checkmark'],
-  8: ['firstdraft', 'signup'],
-  9: ['chain', 'lock']
-};
-
 export const COMMON_ACTIONS = [
   {
     color: 'blue',
@@ -195,3 +99,54 @@ export const COMMON_ACTIONS = [
     icon: 'trash'
   }
 ];
+
+export const INPUT_FIELDS = {
+  GUARANTEE: [
+    '_id',
+    'type',
+    'issuer',
+    'receiver',
+    'beneficiary',
+    'status',
+    'applicable_rules',
+    'details_of_guarantee',
+    'details_of_guarantee_additional_1',
+    'details_of_guarantee_additional_2',
+    'sender_to_receiver_information',
+    'date_of_issue',
+    'date_of_expiration',
+    'date_of_closure',
+    'comment_to_closure',
+    'closure_status',
+    'sent_to_confirm_by',
+    'confirmed_by',
+    'signed_by',
+    'last_updated'
+  ],
+  CHANGE_PASSWORD: [
+    {
+      field: 'currentPassword',
+      props: {
+        type: 'password',
+        label: 'Текущий пароль',
+        placeholder: 'Введите текущий пароль'
+      }
+    },
+    {
+      field: 'newPassword',
+      props: {
+        type: 'password',
+        label: 'Новый пароль',
+        placeholder: 'Ввведите новый пароль'
+      }
+    },
+    {
+      field: 'newPasswordRepeat',
+      props: {
+        type: 'password',
+        label: 'Повторите новый пароль',
+        placeholder: 'Ввведите новый пароль еще раз'
+      }
+    }
+  ]
+};

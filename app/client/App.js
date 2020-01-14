@@ -8,7 +8,7 @@ import withBreadcrumbs from 'react-router-breadcrumbs-hoc';
 import Login from './Login';
 
 import { AuthContext } from './context/auth';
-import Dashboard from './containers/Dashboard';
+import Ideintities from './containers/Identities';
 
 import Header from './components/Header/Header';
 
@@ -57,9 +57,9 @@ const App = ({ breadcrumbs }) => {
       >
         <Container>
           <Switch>
-            <Route exact path="/dashboard" component={Dashboard} />
+            <Route exact path="/ideintities" component={Ideintities} />
             <Route exact path="/profile" component={Profile} />
-            <Redirect from="*" to="/dashboard" />
+            <Redirect from="*" to="/ideintities" />
           </Switch>
         </Container>
       </Container>
@@ -69,6 +69,6 @@ const App = ({ breadcrumbs }) => {
 
 export default withBreadcrumbs([
   { path: '/', breadcrumb: 'Home' },
-  { path: '/dashboard', breadcrumb: 'Dashboard' },
+  { path: '/ideintities', breadcrumb: 'Ideintities' },
   { path: '/profile', breadcrumb: 'Profile' }
 ])(App);
