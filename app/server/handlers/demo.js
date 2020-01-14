@@ -49,23 +49,17 @@ const methods = [
                 identities = [];
                 try {
                     listOrgs = await listDirectory(walletPath);
-                    console.info("List orgs:");
-                    console.log(listOrgs);
                 } catch (e) {
                     throw e;
                 }
                 for(org of listOrgs) {
                     try {
                         listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
-                        console.info("List identities:");
-                        console.log(listIdentities);
                     } catch (e) {
                         throw e;
                     }
                     fullListIdentities.push(...listIdentities)
                 }
-                console.info("Full list identities:");
-                console.log(fullListIdentities);
                 for (label of fullListIdentities) {
                     let name = path.basename(label);
                     let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
