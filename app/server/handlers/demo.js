@@ -1,4 +1,6 @@
 const {DEFAULT_HLF_CHANNEL, DEFAULT_HLF_CHAINCODE} = process.env;
+const path = require('path');
+const fs = require('fs');
 
 // setting for self-signed certs
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -7,8 +9,7 @@ const {invoke} = require('../fabric/fabric-invoke');
 const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
-const x509 = require('x509');
-const {folders} = require('../helper');
+const {listDirectory} = require('../helper');
 
 const {
     ORG = 'example',
@@ -39,13 +40,22 @@ const methods = [
     },
     {
         method: 'get',
-        path: '/api/certs',
+        path: '/api/identities',
         handler: async req => {
             const walletPath = path.join(process.cwd(), 'wallet');
-            const identityFolders = await folders(walletPath);
-            console.log(identityFolders);
-
-            return JSON.parse(identityFolders);
+            let identityLabels;
+            let identities = [];
+            try {
+                identityLabels = await listDirectory(walletPath);
+            } catch (e) {
+                throw e;
+            }
+            for (label of identityLabels) {
+                let name = path.basename(label);
+                let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                identities.push(identity);
+            }
+            return identities;
         }
     },
     {
@@ -71,13 +81,12 @@ const methods = [
         method: 'post',
         path: '/api/enroll',
         handler: async req => {
-            const {username, password} = req.body;
+            const {username, password, attrs} = req.body;
+            const result = await enroll(username, password, attrs, true);
             let cert;
-            const result = await enroll(username, password);
             if (result.success && result.identity && result.enrollment) {
-                cert = x509.parseCert(result.enrollment.certificate);
-            }
-            else if (!result.success) throw new Error(result.message);
+                cert = result.cert;
+            } else if (!result.success) throw new Error(result.message);
 
             return {cert};
         }
@@ -95,10 +104,9 @@ const methods = [
             };
             let cert;
             const result = await register(registrar, username, password, attrs);
-            if (result.success && result.identity && result.enrollment) {
-                cert = x509.parseCert(result.enrollment.certificate);
-            }
-            else if (!result.success) throw new Error(result.message);
+            if (result.success && result.identity && result.cert) {
+                cert = result.cert;
+            } else if (!result.success) throw new Error(result.message);
             return {cert};
         }
     }

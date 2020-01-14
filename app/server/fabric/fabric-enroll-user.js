@@ -6,6 +6,7 @@ const {defaultAttrs} = require('../helper');
 const logger = log4js.getLogger('DEMOFabricApi-Enroll');
 const {wallet, profile, options} = require('./fabric-tools');
 const {X509WalletMixin, Gateway} = require('fabric-network');
+const x509 = require('x509');
 
 const {
     ORG = 'example',
@@ -13,7 +14,7 @@ const {
     DOMAIN = 'example.com'
 } = process.env;
 
-const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs) => {
+const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs, reenroll =false) => {
     try {
         const connectionProfile = await profile();
         const appWallet = await wallet();
@@ -34,7 +35,7 @@ const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs) 
             ca = new FabricCAServices(caInfo.url, {trustedRoots: caTLSCACerts, verify: false}, caInfo.caName);
             enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw, attr_reqs: attrs});
             message = `Successfully enrolled user "${user}" and imported it into the wallet`;
-        } else {
+        } else if(reenroll) {
             const connectionOptions = await options(user);
             // Connect to gateway using application specified parameters
             const gateway = new Gateway();
@@ -45,15 +46,26 @@ const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs) 
             const currentIdentity = gateway.getCurrentIdentity();
             enrollment = await ca.reenroll(currentIdentity, attrs);
             message = `Successfully enrolled user "${user}" and imported it into the wallet`;
+        } else {
+            const connectionOptions = await options(user);
+            // Connect to gateway using application specified parameters
+            const gateway = new Gateway();
+            if (connectionProfile.success && connectionOptions.success) {
+                await gateway.connect(connectionProfile.value, connectionOptions.value);
+            }
+            message = `User "${user}" already enrolled and imported into the wallet`;
+            logger.info(message);
+            return {
+                success: true,
+                message
+            };
         }
         const identity = X509WalletMixin.createIdentity(`${MSPID}`, enrollment.certificate, enrollment.key.toBytes());
         await appWallet.value.wallet.import(user, identity);
         logger.info(message);
         return {
             success: true,
-            message,
-            identity,
-            enrollment
+            message
         };
     } catch (e) {
         logger.error(e);

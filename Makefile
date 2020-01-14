@@ -1,6 +1,6 @@
 .PHONY: bootstrap
 .PHONY: all generate artifacts build-client build-ldap up ss-certs restart install-cc upgrade-cc
-.PHONY: clean force-clean restart-app force-restart-app
+.PHONY: clean force-clean app-restart app-force-restart
 
 -include .env
 -include .makerc
@@ -29,8 +29,8 @@ help:
 	@echo "clean: remove docker containers, volumes, self-signed certs and wallets"
 	@echo "force-clean: remove docker containers, volumes, self-signed certs, wallets, networks and downloads"
 	@echo "restart: clean all the HLF Network artifacts and run bringing up process again"
-	@echo "restart-app: restart only Web-client's docker containers"
-	@echo "force-restart-app: restart only Web-client's docker containers with rebuild Web-client"
+	@echo "app-restart: restart only Web-client's docker containers"
+	@echo "app-force-restart: restart only Web-client's docker containers with rebuild Web-client"
 
 all: generate up install-cc restart-app
 
@@ -78,16 +78,16 @@ build-client:
 build-ldap:
 	./scripts/build-ldap.sh
 
-force-restart-app: build-client
+app-restart:
+	docker restart app.org1.example.com app.org2.example.com
+
+app-force-restart: build-client
 	$(eval $(call build_up_network_options))
 	docker stop app.org1.example.com app.org2.example.com # \
 	docker rm app.org1.example.com app.org2.example.com # \
 	docker-compose -f ./app/docker-compose-app.yaml up -d # \
 	docker network connect net_byfn app.org1.example.com # \
 	docker network connect net_byfn app.org2.example.com
-
-restart-app:
-	docker restart app.org1.example.com app.org2.example.com
 
 ss-certs:
 	./scripts/gen-ss-certs.sh

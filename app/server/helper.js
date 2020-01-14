@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
 
 const {
     LDAP_HOST = 'localhost',
@@ -59,16 +61,15 @@ const checkJWT = async ({cookies, hostname}, res) => {
     }
 };
 
-const folders = async function getFolders(path) {
-    let result = Array();
-    let files = await fs.readdir(path);
-    for (let i = 0; i < files.length; i++) {
-        var filePath = path + '/' + file;
-        if (await fs.stat(filePath).isDirectory()) {
-            result.push(filePath);
-        }
-    }
+const isDirectory = directoryName => {
+    return fs.lstatSync(directoryName).isDirectory()
+};
+
+const listDirectory = async function getFolders(sourceDir) {
+    const result = fs.readdirSync(sourceDir).map(directoryName => {
+        return path.join(sourceDir, directoryName)
+    }).filter(isDirectory);
     return result;
 };
 
-module.exports = {ldapConfig, checkJWT, defaultAttrs, folders};
+module.exports = {ldapConfig, checkJWT, defaultAttrs, listDirectory};
