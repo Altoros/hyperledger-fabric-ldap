@@ -56,10 +56,10 @@ up:
     docker rename ca_peerOrg2 ca.org2.example.com
 
 clean:
-	rm -rf ss-certs && \
-	sudo rm -rf wallets && \
 	cd $(FN_PATH) && \
-	echo y | ./byfn.sh down
+	echo y | ./byfn.sh down # \
+	sudo rm -rf $(PROJECT_PATH)/ss-certs # \
+    sudo rm -rf $(PROJECT_PATH)/wallet
 
 force-clean:
 	docker ps -qa | xargs docker stop # \
@@ -69,7 +69,7 @@ force-clean:
 	rm -rf fabric-samples # \
 	rm bootstrap.sh # \
 	rm -rf ss-certs # \
-	sudo rm -rf wallets
+	sudo rm -rf wallet
 
 
 build-client:

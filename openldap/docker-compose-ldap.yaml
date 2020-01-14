@@ -4,9 +4,6 @@ services:
 
   ldap.org1.example.com:
     image: demo/ldap:latest
-    build:
-      dockerfile: ./Dockerfile
-      context: ../../openldap/
     container_name: ldap.org1.example.com
     restart: always
     environment:
@@ -33,20 +30,17 @@ services:
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
-      - ../../ss-certs/org1/ldap.org1.example.com.key:/container/service/slapd/assets/certs/ldap.key
-      - ../../ss-certs/org1/ldap.org1.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
-      - ../../ss-certs/org1/ca.org1.example.com.crt:/container/service/slapd/assets/certs/ca.crt
-      - ../../openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
-      - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+      - $PROJECT_PATH/ss-certs/org1/ldap.org1.example.com.key:/container/service/slapd/assets/certs/ldap.key
+      - $PROJECT_PATH/ss-certs/org1/ldap.org1.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
+      - $PROJECT_PATH/ss-certs/org1/ca.org1.example.com.crt:/container/service/slapd/assets/certs/ca.crt
+      - $PROJECT_PATH/openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - $PROJECT_PATH/openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:
       - byfn
 
   ldap.org2.example.com:
     image: demo/ldap:latest
-    build:
-      dockerfile: ./Dockerfile
-      context: ../../openldap/
     container_name: ldap.org2.example.com
     restart: always
     environment:
@@ -73,11 +67,11 @@ services:
     volumes:
       - /var/lib/ldap
       - /etc/ldap/slapd.d
-      - ../../ss-certs/org2/ldap.org2.example.com.key:/container/service/slapd/assets/certs/ldap.key
-      - ../../ss-certs/org2/ldap.org2.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
-      - ../../ss-certs/org2/ca.org2.example.com.crt:/container/service/slapd/assets/certs/ca.crt
-      - ../../openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
-      - ../../openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
+      - $PROJECT_PATH/ss-certs/org2/ldap.org2.example.com.key:/container/service/slapd/assets/certs/ldap.key
+      - $PROJECT_PATH/ss-certs/org2/ldap.org2.example.com.crt:/container/service/slapd/assets/certs/ldap.crt
+      - $PROJECT_PATH/ss-certs/org2/ca.org2.example.com.crt:/container/service/slapd/assets/certs/ca.crt
+      - $PROJECT_PATH/openldap/ldif/bootstrap:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      - $PROJECT_PATH/openldap/pqparams.dat:/etc/ldap/pqchecker/pqparams.dat
     hostname: "example.com"
     networks:
       - byfn

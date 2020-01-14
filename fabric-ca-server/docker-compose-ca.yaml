@@ -8,10 +8,13 @@ version: '2'
 services:
   ca0:
     volumes:
-      - ../../fabric-ca-server/fabric-ca-server-config-org1.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
-      - ../../ss-certs/org1/ca.org1.example.com.crt:/etc/hyperledger/ldap-configs/ca.org1.example.com-cert.pem
-      - ../../ss-certs/org1/app.org1.example.com.crt:/etc/hyperledger/ldap-configs/client.org1.example.com-cert.pem
-      - ../../ss-certs/org1/app.org1.example.com.key:/etc/hyperledger/ldap-configs/client.org1.example.com-key.pem
+      - $PROJECT_PATH/fabric-ca-server/fabric-ca-server-config-org1.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - $PROJECT_PATH/ss-certs/org1/ca.org1.example.com.crt:/etc/hyperledger/ldap-configs/ca.org1.example.com-cert.pem
+      - $PROJECT_PATH/ss-certs/org1/app.org1.example.com.crt:/etc/hyperledger/ldap-configs/client.org1.example.com-cert.pem
+      - $PROJECT_PATH/ss-certs/org1/app.org1.example.com.key:/etc/hyperledger/ldap-configs/client.org1.example.com-key.pem
   ca1:
     volumes:
-      - ../../fabric-ca-server/fabric-ca-server-config-org2.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - $PROJECT_PATH/fabric-ca-server/fabric-ca-server-config-org2.yaml:/etc/hyperledger/fabric-ca-server/fabric-ca-server-config.yaml
+      - $PROJECT_PATH/ss-certs/org2/ca.org2.example.com.crt:/etc/hyperledger/ldap-configs/ca.org2.example.com-cert.pem
+      - $PROJECT_PATH/ss-certs/org2/app.org2.example.com.crt:/etc/hyperledger/ldap-configs/client.org2.example.com-cert.pem
+      - $PROJECT_PATH/ss-certs/org2/app.org2.example.com.key:/etc/hyperledger/ldap-configs/client.org2.example.com-key.pem
