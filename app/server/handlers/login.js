@@ -3,16 +3,16 @@ const jwt = require('jsonwebtoken');
 const ldapError = require('../tools/ldap-error');
 const {enroll} = require('../fabric/fabric-enroll-user');
 
-const {ldapConfig} = require('../helper');
+const {ldapConfig, isProduction} = require('../helper');
 
-const {JWT_SECRET = 'example_secret', ORG = 'example', NODE_ENV = 'development'} = process.env;
+const {JWT_SECRET = 'example_secret', ORG = 'example'} = process.env;
 
 const {encrypt} = require('../tools/encryption');
 
 const authenticate = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        if (NODE_ENV === 'production') {
+        if (isProduction) {
             ldapClient.bind(
                 `uid=${userId},${ldapConfig.bindDn}`,
                 password,
@@ -32,7 +32,7 @@ const authenticate = (userId, password) =>
 const userLdapInfo = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        if (NODE_ENV === 'production') {
+        if (isProduction) {
             ldapClient.bind(
                 `${ldapConfig.adminDn}`,
                 `${ldapConfig.adminPw}`,
@@ -101,7 +101,7 @@ module.exports = async (req, res) => {
         }
 
         try {
-            if (NODE_ENV === 'production') await enroll(req.body.username, req.body.password);
+            if (isProduction) await enroll(req.body.username, req.body.password);
         } catch (e) {
             return res.status(401).send({error: e})
         }

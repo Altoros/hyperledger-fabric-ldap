@@ -5,7 +5,8 @@ const path = require('path');
 const {
     LDAP_HOST = 'localhost',
     DOMAIN = 'example.com',
-    JWT_SECRET = 'example_secret'
+    JWT_SECRET = 'example_secret',
+    NODE_ENV = 'development'
 } = process.env;
 
 const ldapConfig = {
@@ -19,6 +20,10 @@ const ldapConfig = {
     timeout: 5000,
     connectTimeout: 10000,
     reconnect: true
+};
+
+const isProduction = () => {
+    return NODE_ENV === 'production';
 };
 
 const defaultAttrs = [
@@ -72,4 +77,4 @@ const listDirectory = async function getFolders(sourceDir) {
     return result;
 };
 
-module.exports = {ldapConfig, checkJWT, defaultAttrs, listDirectory};
+module.exports = {ldapConfig, checkJWT, defaultAttrs, listDirectory, isProduction};

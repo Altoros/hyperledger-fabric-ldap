@@ -6,11 +6,11 @@ const {invoke} = require('../fabric/fabric-invoke');
 const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
-const {listDirectory} = require('../helper');
+const {listDirectory, isProduction} = require('../helper');
 const {fakeIdentities} = require('../fakeData');
 
 const {
-    ORG = 'example', NODE_ENV = 'development'
+    ORG = 'example'
 } = process.env;
 
 const methods = [
@@ -45,7 +45,7 @@ const methods = [
             let listIdentities = [];
             let listOrgs;
             let identities = fakeIdentities;
-            if(NODE_ENV === 'production') {
+            if(isProduction) {
                 identities = [];
                 try {
                     listOrgs = await listDirectory(walletPath);
