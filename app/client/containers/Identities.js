@@ -45,9 +45,6 @@ const Identities = ({ match }) => {
 
   return (
     <>
-        <Button primary as={Link} to="/identities/reenroll">
-          Reenroll
-        </Button>
       <Segment>
         <Menu text>
           <Menu.Item

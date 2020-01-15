@@ -73,38 +73,35 @@ const methods = [
     },
     {
         method: 'get',
-        path: '/api/identity',
+        path: '/api/identities/:id',
         handler: async req => {
-            let identity = fakeIdentities[0];
-            const user = req.user.user_info.full_name;
+            let result = fakeIdentities[0];
+            const {id} = req.params;
+            const walletPath = path.join(process.cwd(), 'wallet');
+            let fullListIdentities = [];
+            let listIdentities = [];
+            let listOrgs;
             if (isProduction()) {
-                const connectionProfile = await profile();
-                const connectionOptions = await options(user);
-                // Connect to gateway using application specified parameters
-                const gateway = new Gateway();
-                if (connectionProfile.success && connectionOptions.success) {
-                    await gateway.connect(connectionProfile.value, connectionOptions.value);
+                try {
+                    listOrgs = await listDirectory(walletPath);
+                } catch (e) {
+                    throw e;
                 }
-                identity = gateway.getCurrentIdentity();
-                const contentWallet = await connectionOptions.value.wallet.list();
-
-                return [
-                    {
-                        "name": identity.getName(),
-                        "mspid": identity.getIdentity().getMSPId(),
-                        "roles": identity.getRoles(),
-                        "affiliation": identity.getAffiliation(),
-                        "enrollment": {
-                            "signingIdentity": contentWallet.map(i => i.label === user ? i.identifier : ''),
-                            "identity": {
-                                "certificate": identity.getIdentity()._certificate
-                            }
-                        }
+                for (org of listOrgs) {
+                    try {
+                        listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                    } catch (e) {
+                        throw e;
                     }
-                ]
-
+                    fullListIdentities.push(...listIdentities)
+                }
+                for (label of fullListIdentities) {
+                    let name = path.basename(label);
+                    let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                    result = identity.enrollment.signingIdentity === id ? identity : null;
+                }
             }
-            return identity;
+            return result;
         }
     },
     {

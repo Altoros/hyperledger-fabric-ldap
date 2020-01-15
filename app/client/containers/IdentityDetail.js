@@ -11,14 +11,13 @@ import { form } from '../reducers/form';
 
 import { validateForm } from '../utils/validation';
 
-import GuaranteeForm from '../components/GuaranteeForm/GuaranteeForm';
+import IdentityForm from '../components/IdentityForm/IdentityForm';
 import Actions from './Actions';
 
 import { AuthContext } from '../context/auth';
 
-const dates = ['date_of_issue', 'date_of_closure', 'date_of_expiration'];
 const init = state => {
-  return INPUT_FIELDS.GUARANTEE.reduce(
+  return INPUT_FIELDS.IDENTITY.reduce(
     (prev, curr) => {
       prev[curr] = state[curr];
       if (dates.includes(curr)) {
@@ -36,7 +35,7 @@ const init = state => {
   );
 };
 
-const GuaranteeDetail = ({ data, guaranteeType }) => {
+const IdentityDetail = ({ data, guaranteeType }) => {
   const contextRef = createRef();
 
   const { user } = useContext(AuthContext);
@@ -89,7 +88,7 @@ const GuaranteeDetail = ({ data, guaranteeType }) => {
               <></>
             )}
           </div>
-          <GuaranteeForm
+          <IdentityForm
             roles={roles}
             state={formState}
             dispatch={dispatch}
@@ -104,15 +103,11 @@ const GuaranteeDetail = ({ data, guaranteeType }) => {
 const GuaranteeDetailWrapper = ({ match }) => {
   const useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
-  const type = query.get('type');
-  const issuer = query.get('issuer');
-  const receiver = query.get('receiver');
   const guaranteeType = match.path.slice(1).replace('/:id', '');
 
   const { params } = match;
   const { id } = params;
-  const [data] = useGet(
-    type ? `/api/guarantee/${id}?type=${type}&issuer=${issuer}&receiver=${receiver}` : `/api/guarantee/${id}`
+  const [data] = useGet(`/api/identities/${id}`
   );
 
   if (data.loading) {
@@ -120,14 +115,14 @@ const GuaranteeDetailWrapper = ({ match }) => {
   }
 
   if (!data.data) {
-    return <>Гарантия не найдена</>;
+    return <>Identity not found</>;
   }
 
   if (data.error) {
     return <Message color="red">{data.error || 'Not found'}</Message>;
   }
 
-  return <GuaranteeDetail data={data.data} guaranteeType={guaranteeType} />;
+  return <IdentityDetail data={data.data} guaranteeType={guaranteeType} />;
 };
 
 export default withRouter(props => <GuaranteeDetailWrapper {...props} />);

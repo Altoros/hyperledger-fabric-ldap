@@ -11,10 +11,10 @@
   opacity: 0.8 !important;
 }
 
-.guarantee-form-focused input,
-.guarantee-form-focused textarea,
-.guarantee-form-focused .ui .selection .dropdown,
-.guarantee-form-focused .dropdown {
+.identity-form-focused input,
+.identity-form-focused textarea,
+.identity-form-focused .ui .selection .dropdown,
+.identity-form-focused .dropdown {
   border-color: #85b7d9 !important;
 }
 
@@ -23,12 +23,12 @@
   padding-bottom: 1 !important;
 }
 
-.field.guarantee-form-row {
+.field.identity-form-row {
   margin-top: auto;
   margin-bottom: auto;
   padding-right: 0 !important;
 }
 
-.guaranteeText {
+.identityText {
   white-space: pre-line;
 }

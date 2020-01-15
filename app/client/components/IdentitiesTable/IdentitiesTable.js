@@ -6,18 +6,22 @@ import {Button, Table, Icon, Popup} from 'semantic-ui-react';
 const BUTTONS = [
     {
         label: 'View',
+        type: 'identities',
         icon: 'info'
     },
     {
         label: 'Reenroll',
+        type: 'enroll',
         icon: 'file alternate outline'
     },
     {
         label: 'Revoke',
+        type: 'revoke',
         icon: 'file outline'
     },
     {
         label: 'Send',
+        type: 'invoke',
         icon: 'send'
     }
 ];
@@ -47,9 +51,9 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                         MSPID
                     </Table.HeaderCell>
                     <Table.HeaderCell
-                        sorted={sortBy.column === 'certificate' ? sortBy.direction : null}
+                        sorted={sortBy.column === 'identifier' ? sortBy.direction : null}
                     >
-                        Certificate
+                        Identifier
                     </Table.HeaderCell>
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
@@ -61,7 +65,7 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                     <Table.Row key={i.name}>
                         <Table.Cell>{i.name}</Table.Cell>
                         <Table.Cell>{i.mspid}</Table.Cell>
-                        <Table.Cell>{i.enrollment.identity.certificate}</Table.Cell>
+                        <Table.Cell>{i.enrollment.signingIdentity}</Table.Cell>
                         <Table.Cell
                             style={{
                                 width: 150

@@ -6,7 +6,7 @@ import { Button, Message } from 'semantic-ui-react';
 import { Redirect } from 'react-router-dom';
 import 'react-datepicker/dist/react-datepicker.css';
 
-import GuaranteeForm from '../GuaranteeForm/GuaranteeForm';
+import IdentityForm from '../IdentityForm/GuaranteeForm';
 
 import { form } from '../../reducers/form';
 import { post } from '../../utils/api';
@@ -55,7 +55,7 @@ const AddGuarantee = ({ issuer }) => {
       ) : (
         <></>
       )}
-      <GuaranteeForm
+      <IdentityForm
         add={true}
         state={formState}
         dispatch={dispatch}
