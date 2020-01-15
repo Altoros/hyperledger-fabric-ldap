@@ -10,11 +10,15 @@ const BUTTONS = [
     },
     {
         label: 'Reenroll',
-        icon: 'sync'
+        icon: 'file alternate outline'
     },
     {
         label: 'Revoke',
-        icon: 'close icon'
+        icon: 'file outline'
+    },
+    {
+        label: 'Send',
+        icon: 'send'
     }
 ];
 

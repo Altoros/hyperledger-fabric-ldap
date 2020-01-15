@@ -87,7 +87,7 @@ const init = async () => {
 
     app.listen(PORT, () => {
         console.info(`listening on port: ${PORT}`);
-        console.info(`server is running in ${isProduction ? 'production' : 'development'} mode`)
+        console.info(`server is running in ${isProduction() ? 'production' : 'development'} mode`)
     });
 };
 

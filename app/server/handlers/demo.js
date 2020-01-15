@@ -6,8 +6,10 @@ const {invoke} = require('../fabric/fabric-invoke');
 const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
+const {options, profile} = require('../fabric/fabric-tools');
 const {listDirectory, isProduction} = require('../helper');
 const {fakeIdentities} = require('../fakeData');
+const {Gateway} = require('fabric-network');
 
 const {
     ORG = 'example'
@@ -45,14 +47,14 @@ const methods = [
             let listIdentities = [];
             let listOrgs;
             let identities = fakeIdentities;
-            if(isProduction) {
+            if (isProduction()) {
                 identities = [];
                 try {
                     listOrgs = await listDirectory(walletPath);
                 } catch (e) {
                     throw e;
                 }
-                for(org of listOrgs) {
+                for (org of listOrgs) {
                     try {
                         listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
                     } catch (e) {
@@ -67,6 +69,42 @@ const methods = [
                 }
             }
             return identities;
+        }
+    },
+    {
+        method: 'get',
+        path: '/api/identity',
+        handler: async req => {
+            let identity = fakeIdentities[0];
+            const user = req.user.user_info.full_name;
+            if (isProduction()) {
+                const connectionProfile = await profile();
+                const connectionOptions = await options(user);
+                // Connect to gateway using application specified parameters
+                const gateway = new Gateway();
+                if (connectionProfile.success && connectionOptions.success) {
+                    await gateway.connect(connectionProfile.value, connectionOptions.value);
+                }
+                identity = gateway.getCurrentIdentity();
+                const contentWallet = await connectionOptions.value.wallet.list();
+
+                return [
+                    {
+                        "name": identity.getName(),
+                        "mspid": identity.getIdentity().getMSPId(),
+                        "roles": identity.getRoles(),
+                        "affiliation": identity.getAffiliation(),
+                        "enrollment": {
+                            "signingIdentity": contentWallet.map(i => i.label === user ? i.identifier : ''),
+                            "identity": {
+                                "certificate": identity.getIdentity()._certificate
+                            }
+                        }
+                    }
+                ]
+
+            }
+            return identity;
         }
     },
     {

@@ -4,7 +4,7 @@ module.exports = state => `<!DOCTYPE html>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>DEMO</title>
+    <title>LDAP DEMO</title>
     <link rel="shortcut icon" href="/favicon.26242483.ico">
     <link rel="stylesheet" href="/index.css" />
 </head>

@@ -12,73 +12,69 @@ const {encrypt} = require('../tools/encryption');
 const authenticate = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        if (isProduction) {
-            ldapClient.bind(
-                `uid=${userId},${ldapConfig.bindDn}`,
-                password,
-                (err, res) => {
-                    if (err) {
-                        // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
-                        return reject(err);
-                    }
-                    ldapClient.unbind();
-                    resolve(res);
+        ldapClient.bind(
+            `uid=${userId},${ldapConfig.bindDn}`,
+            password,
+            (err, res) => {
+                if (err) {
+                    // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
+                    return reject(err);
                 }
-            );
-        }
-        resolve()
+                ldapClient.unbind();
+                resolve(res);
+            }
+        );
     });
 
 const userLdapInfo = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
-        if (isProduction) {
-            ldapClient.bind(
-                `${ldapConfig.adminDn}`,
-                `${ldapConfig.adminPw}`,
-                (err, res) => {
+        ldapClient.bind(
+            `${ldapConfig.adminDn}`,
+            `${ldapConfig.adminPw}`,
+            (err, res) => {
+                if (err) {
+                    // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
+                    return reject(err);
+                }
+                const options = {
+                    scope: 'sub',
+                    filter: `(&(objectclass=groupOfNames)(member=uid=${userId},${ldapConfig.bindDn}))`
+                };
+                ldapClient.search(ldapConfig.baseDn, options, (err, res) => {
                     if (err) {
-                        // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
                         return reject(err);
                     }
-                    const options = {
-                        scope: 'sub',
-                        filter: `(&(objectclass=groupOfNames)(member=uid=${userId},${ldapConfig.bindDn}))`
-                    };
-                    ldapClient.search(ldapConfig.baseDn, options, (err, res) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                        const entries = [];
-                        res.on('searchEntry', entry => {
-                            const r = entry.object;
-                            entries.push(r);
-                        });
-
-                        res.on('error', err => {
-                            reject(err);
-                        });
-
-                        res.on('end', () => {
-                            ldapClient.unbind();
-                            const user_info = {};
-                            user_info.full_name = userId;
-                            user_info.groups = [];
-                            entries.forEach(group => {
-                                user_info.groups.push(group.cn);
-                            });
-                            resolve(user_info);
-                        });
+                    const entries = [];
+                    res.on('searchEntry', entry => {
+                        const r = entry.object;
+                        entries.push(r);
                     });
-                }
-            );
-        }
-        resolve()
+
+                    res.on('error', err => {
+                        reject(err);
+                    });
+
+                    res.on('end', () => {
+                        ldapClient.unbind();
+                        const user_info = {};
+                        user_info.full_name = userId;
+                        user_info.groups = [];
+                        entries.forEach(group => {
+                            user_info.groups.push(group.cn);
+                        });
+                        resolve(user_info);
+                    });
+                });
+            }
+        );
     });
 
 module.exports = async (req, res) => {
     try {
-        const userAuth = await authenticate(req.body.username, req.body.password);
+        if (isProduction()) {
+            await authenticate(req.body.username, req.body.password);
+        }
         const expires = new Date();
         expires.setDate(expires.getDate() + 2); // 2 days
         const tokenMsg = {
@@ -93,17 +89,19 @@ module.exports = async (req, res) => {
             },
             force_password_change: false
         };
-        try {
-            const userInfo = await userLdapInfo(req.body.username, req.body.password);
-            tokenMsg.user_info.groups = userInfo.groups ? userInfo.groups : [];
-        } catch (e) {
-            tokenMsg.force_password_change = ldapError(e).pwdMustChange;
-        }
-
-        try {
-            if (isProduction) await enroll(req.body.username, req.body.password);
-        } catch (e) {
-            return res.status(401).send({error: e})
+        if (isProduction()) {
+            let userInfo;
+            try {
+                userInfo = await userLdapInfo(req.body.username, req.body.password);
+                tokenMsg.user_info.groups = userInfo.groups ? userInfo.groups : [];
+            } catch (e) {
+                tokenMsg.force_password_change = ldapError(e).pwdMustChange;
+            }
+            try {
+                await enroll(req.body.username, req.body.password);
+            } catch (e) {
+                return res.status(401).send({error: e})
+            }
         }
 
         const token = jwt.sign(tokenMsg, JWT_SECRET);

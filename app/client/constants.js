@@ -128,24 +128,50 @@ export const INPUT_FIELDS = {
       field: 'currentPassword',
       props: {
         type: 'password',
-        label: 'Текущий пароль',
-        placeholder: 'Введите текущий пароль'
+        label: 'Current password',
+        placeholder: 'Type current password'
       }
     },
     {
       field: 'newPassword',
       props: {
         type: 'password',
-        label: 'Новый пароль',
-        placeholder: 'Ввведите новый пароль'
+        label: 'New password',
+        placeholder: 'Type new password'
       }
     },
     {
       field: 'newPasswordRepeat',
       props: {
         type: 'password',
-        label: 'Повторите новый пароль',
-        placeholder: 'Ввведите новый пароль еще раз'
+        label: 'Repeat new password',
+        placeholder: 'Type new password again'
+      }
+    }
+  ],
+  IDENTITY: [
+    {
+      field: 'currentPassword',
+      props: {
+        type: 'text',
+        label: 'Current password',
+        placeholder: 'Type current password'
+      }
+    },
+    {
+      field: 'newPassword',
+      props: {
+        type: 'password',
+        label: 'New password',
+        placeholder: 'Type new password'
+      }
+    },
+    {
+      field: 'newPasswordRepeat',
+      props: {
+        type: 'password',
+        label: 'Repeat new password',
+        placeholder: 'Type new password again'
       }
     }
   ]
