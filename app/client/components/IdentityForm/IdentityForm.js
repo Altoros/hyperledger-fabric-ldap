@@ -3,6 +3,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, Grid } from 'semantic-ui-react';
+import JSONPretty from 'react-json-pretty';
+import 'react-json-pretty/themes/monikai.css';
 
 const Row = ({ label, children, readOnly }) => (
   <Grid.Row className={readOnly ? 'readOnly' : ''} columns={2}>
@@ -55,6 +57,9 @@ const IdentityForm = ({ state, dispatch, errors}) => {
             }
           />
         </Row>
+        <Row readOnly={true} label="Decoded x509 Certificate">
+          <JSONPretty id="json-pretty" style={{"background-color": "#1c2833"}} data={state.decodedCertificate} mainStyle="color: #ffffff" valueStyle={"color: #f5b041"} keyStyle="color: #77eef5"></JSONPretty>
+        </Row>
       </Grid>
     </Form>
   );
@@ -66,6 +71,7 @@ IdentityForm.propTypes = {
     mspid: PropTypes.string,
     roles: PropTypes.string,
     enrollment: PropTypes.object,
+    decodedCertificate: PropTypes.object
   }),
   dispatch: PropTypes.func,
 };

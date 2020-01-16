@@ -200,7 +200,9 @@
         "st",
         "uid",
         "uidNumber",
-        "memberOf"
+        "memberOf",
+        "minValue",
+        "maxValue"
       ]
 
       # The 'converters' section is used to convert an LDAP entry to the value of
@@ -214,11 +216,9 @@
       #         value: attr("uid") =~ "revoker*"
       converters:
         - name: hf.GenCRL
-          value: attr("memberOf") =~ "cn=Gencrl,ou=groups,dc=example,dc=com" || attr("memberOf") =~ "cn=pkiAdmin,ou=groups,dc=example,dc=com"
+          value: attr("memberOf") =~ "cn=Gencrl,ou=groups,dc=example,dc=com"
         - name: hf.Revoker
-          value: attr("memberOf") =~ "cn=Revoker,ou=groups,dc=example,dc=com" || attr("memberOf") =~ "cn=pkiAdmin,ou=groups,dc=example,dc=com"
-        - name: hf.IntermediateCA
-          value: attr("memberOf") =~ "cn=Ca,ou=groups,dc=example,dc=com"
+          value: attr("memberOf") =~ "cn=Revoker,ou=groups,dc=example,dc=com"
         - name: hf.Registrar.Roles
           value: map(attr("memberOf"),"roles")
 
@@ -255,8 +255,6 @@
             value: auditor
           - name: cn=Validator,ou=groups,dc=example,dc=com
             value: validator
-          - name: cn=pkiAdmin,ou=groups,dc=example,dc=com
-            value: pkiadmin
 
   #############################################################################
   # Affiliations section. Fabric CA server can be bootstrapped with the

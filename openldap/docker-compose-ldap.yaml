@@ -10,6 +10,9 @@ services:
       LDAP_aANISATION: "LDAP Organization"
       LDAP_DOMAIN: "example.com"
       LDAP_BASE_DN: ""
+      ORG_NAME: "org1"
+      DOMAIN_NAME: "example"
+      DOMAIN_ZONE: "com"
       LDAP_ADMIN_PASSWORD: "admin"
       LDAP_CONFIG_PASSWORD: "config"
       # Tls
@@ -47,6 +50,7 @@ services:
       LDAP_aANISATION: "LDAP Organization"
       LDAP_DOMAIN: "example.com"
       LDAP_BASE_DN: ""
+      ORG_NAME: "org2"
       LDAP_ADMIN_PASSWORD: "admin"
       LDAP_CONFIG_PASSWORD: "config"
       # Tls

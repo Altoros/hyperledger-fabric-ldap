@@ -1,0 +1,14 @@
+dn: cn=Client,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+changetype: modify
+add: member
+member: uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+
+dn: cn=App,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+changetype: modify
+add: member
+member: uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+
+dn: cn=User,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+changetype: modify
+add: member
+member: uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}

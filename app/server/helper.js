@@ -4,6 +4,7 @@ const path = require('path');
 
 const {
     LDAP_HOST = 'localhost',
+    ORG = 'example',
     DOMAIN = 'example.com',
     JWT_SECRET = 'example_secret',
     NODE_ENV = 'development'
@@ -11,7 +12,7 @@ const {
 
 const ldapConfig = {
     url: `ldaps://${LDAP_HOST}`,
-    bindDn: `ou=users,ou=fabric,dc=hyperledeger,dc=${DOMAIN.split('.')[0]},dc=${
+    bindDn: `ou=users,dc=${ORG},dc=${DOMAIN.split('.')[0]},dc=${
         DOMAIN.split('.')[1]
         }`,
     adminDn: `cn=admin,dc=${DOMAIN.split('.')[0]},dc=${DOMAIN.split('.')[1]}`,
@@ -40,7 +41,9 @@ const defaultAttrs = [
     "st",
     "uid",
     "uidNumber",
-    "memberOf"
+    "memberOf",
+    "minValue",
+    "maxValue"
 ];
 
 const checkJWT = async ({cookies, hostname}, res) => {

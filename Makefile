@@ -31,6 +31,7 @@ help:
 	@echo "restart: clean all the HLF Network artifacts and run bringing up process again"
 	@echo "app-restart: restart only Web-client's docker containers"
 	@echo "app-force-restart: restart only Web-client's docker containers with rebuild Web-client"
+	@echo "app-force-stop: stop only Web-client's docker containers with remove containers and volumes"
 
 all: generate up install-cc restart-app
 
@@ -55,7 +56,7 @@ up:
 	docker rename ca_peerOrg1 ca.org1.example.com && \
     docker rename ca_peerOrg2 ca.org2.example.com
 
-clean:
+clean: app-force-stop
 	cd $(FN_PATH) && \
 	echo y | ./byfn.sh down # \
 	sudo rm -rf $(PROJECT_PATH)/ss-certs # \
@@ -80,6 +81,12 @@ build-ldap:
 
 app-restart:
 	docker restart app.org1.example.com app.org2.example.com
+
+app-force-stop:
+	$(eval $(call build_up_network_options))
+	docker stop app.org1.example.com app.org2.example.com # \
+	docker rm app.org1.example.com app.org2.example.com # \
+	docker-compose -f ./app/docker-compose-app.yaml down
 
 app-force-restart: build-client
 	$(eval $(call build_up_network_options))

@@ -94,7 +94,6 @@ module.exports = async (req, res) => {
             try {
                 userInfo = await userLdapInfo(req.body.username, req.body.password);
                 tokenMsg.user_info.groups = userInfo.groups ? userInfo.groups : [];
-                console.log(userInfo.groups)
             } catch (e) {
                 tokenMsg.force_password_change = ldapError(e).pwdMustChange;
             }

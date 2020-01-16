@@ -10,6 +10,7 @@ const {options, profile} = require('../fabric/fabric-tools');
 const {listDirectory, isProduction} = require('../helper');
 const {fakeIdentities} = require('../fakeData');
 const {Gateway} = require('fabric-network');
+const x509 = require('x509');
 
 const {
     ORG = 'example'
@@ -48,25 +49,31 @@ const methods = [
             let listOrgs;
             let identities = fakeIdentities;
             if (isProduction()) {
-                identities = [];
                 try {
-                    listOrgs = await listDirectory(walletPath);
-                } catch (e) {
-                    throw e;
-                }
-                for (org of listOrgs) {
+                    identities = [];
                     try {
-                        listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                        listOrgs = await listDirectory(walletPath);
                     } catch (e) {
                         throw e;
                     }
-                    fullListIdentities.push(...listIdentities)
+                    for (org of listOrgs) {
+                        try {
+                            listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                        } catch (e) {
+                            throw e;
+                        }
+                        fullListIdentities.push(...listIdentities)
+                    }
+                    for (label of fullListIdentities) {
+                        let name = path.basename(label);
+                        let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                        identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
+                        identities.push(identity);
+                    }
+                } catch (e) {
+                    throw e
                 }
-                for (label of fullListIdentities) {
-                    let name = path.basename(label);
-                    let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
-                    identities.push(identity);
-                }
+
             }
             return identities;
         }
@@ -83,22 +90,30 @@ const methods = [
             let listOrgs;
             if (isProduction()) {
                 try {
-                    listOrgs = await listDirectory(walletPath);
-                } catch (e) {
-                    throw e;
-                }
-                for (org of listOrgs) {
+
                     try {
-                        listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                        listOrgs = await listDirectory(walletPath);
                     } catch (e) {
                         throw e;
                     }
-                    fullListIdentities.push(...listIdentities)
-                }
-                for (label of fullListIdentities) {
-                    let name = path.basename(label);
-                    let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
-                    result = identity.enrollment.signingIdentity === id ? identity : null;
+                    for (org of listOrgs) {
+                        try {
+                            listIdentities = await listDirectory(path.join(walletPath, path.basename(org)));
+                        } catch (e) {
+                            throw e;
+                        }
+                        fullListIdentities.push(...listIdentities)
+                    }
+                    for (label of fullListIdentities) {
+                        let name = path.basename(label);
+                        let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                        if(identity.enrollment.signingIdentity === id){
+                            identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
+                            result = identity;
+                        }
+                    }
+                } catch (e) {
+                    throw e;
                 }
             }
             return result;

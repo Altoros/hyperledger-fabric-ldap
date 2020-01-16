@@ -1,30 +1,28 @@
-#
-# Copyright IBM Corp. All Rights Reserved.
-#
-# SPDX-License-Identifier: Apache-2.0
-#
 # User primary group
-dn: cn=jsmith,dc=example,dc=org
-cn: jsmith
-objectClass: top
+dn: cn=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 objectClass: posixGroup
-gidNumber: 10000
+cn: user.6
+gidNumber: 10006
 
 # User account
-dn: uid=jsmith,dc=example,dc=org
-cn: John Smith
-givenName: John
-sn: Smith
-uid: jsmith
-uidNumber: 10000
-gidNumber: 10000
-homeDirectory: /home/jsmith
-mail: jsmith@dev.local
-objectClass: top
-objectClass: posixAccount
-objectClass: shadowAccount
+dn: uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+objectClass: demoValues
 objectClass: inetOrgPerson
-objectClass: organizationalPerson
-objectClass: person
+objectClass: shadowAccount
+objectClass: posixAccount
+cn: user.6
+gidNumber: 10006
+homeDirectory: /home/user.6
+sn: {{ ORG_NAME }}
+uid: user.6
+uidNumber: 10006
+minValue: 5
+maxValue: 10
+givenName: user.6
 loginShell: /bin/bash
-userPassword: {CRYPT}*
+mail: user.6@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
+o: {{ ORG_NAME }}
+ou: Confirm
+st: North Carolina
+pwdReset: TRUE
+userPassword: user6pw
