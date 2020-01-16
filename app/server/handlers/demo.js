@@ -67,7 +67,6 @@ const methods = [
                     for (label of fullListIdentities) {
                         let name = path.basename(label);
                         let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
-                        identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
                         identities.push(identity);
                     }
                 } catch (e) {
@@ -107,8 +106,7 @@ const methods = [
                     for (label of fullListIdentities) {
                         let name = path.basename(label);
                         let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
-                        if(identity.enrollment.signingIdentity === id){
-                            identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
+                        if (identity.enrollment.signingIdentity === id) {
                             result = identity;
                         }
                     }

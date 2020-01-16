@@ -6,13 +6,10 @@ import { Message, Sticky } from 'semantic-ui-react';
 
 import { useGet } from '../hooks';
 
-import { INPUT_FIELDS } from '../constants';
 import { form } from '../reducers/form';
 
-import { validateForm } from '../utils/validation';
 
 import IdentityForm from '../components/IdentityForm/IdentityForm';
-import Actions from './Actions';
 
 import { AuthContext } from '../context/auth';
 
