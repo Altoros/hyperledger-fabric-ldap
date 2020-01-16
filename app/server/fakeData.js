@@ -27,4 +27,11 @@ const fakeIdentities = [
     }
 ];
 
+
+const fakeQuery = [
+    {
+
+    }
+];
+
 module.exports = {fakeIdentities};

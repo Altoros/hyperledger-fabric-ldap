@@ -2,13 +2,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form, Select, Grid } from 'semantic-ui-react';
-import DatePicker from 'react-datepicker';
-import ru from 'date-fns/locale/ru';
-
-import {
-ATTRIBUTES
-} from '../../constants'
+import { Form, Grid } from 'semantic-ui-react';
 
 const Row = ({ label, children, readOnly }) => (
   <Grid.Row className={readOnly ? 'readOnly' : ''} columns={2}>
@@ -20,8 +14,6 @@ const Row = ({ label, children, readOnly }) => (
 );
 
 const IdentityForm = ({ state, dispatch, errors}) => {
-  const draftType = state.status <= 4 ? 'issue' : 'closure';
-  const editMode = false;
 
   const handleChange = (field, value) => {
     return dispatch({
@@ -31,25 +23,23 @@ const IdentityForm = ({ state, dispatch, errors}) => {
     });
   };
 
-  const rowsPadding =  'readOnly';
-
   return (
     <Form>
       <Grid>
         <Row readOnly={true} label={'Name'}>
-          <p>state.name]</p>
+          <p>{state.name}</p>
         </Row>
         <Row readOnly={true} label={'MSPID'}>
-          <p>state.mspid]</p>
+          <p>{state.mspid}</p>
         </Row>
         <Row readOnly={true} label={'Roles'}>
-          <p>state.roles]</p>
+          <p>{state.roles}</p>
         </Row>
         <Row readOnly={true} label={'Affiliation'}>
-          <p>state.affiliation]</p>
+          <p>{state.affiliation}</p>
         </Row>
         <Row readOnly={true} label={'Identifier'}>
-          <p>state.identifier]</p>
+          <p>{state.enrollment.signingIdentity}</p>
         </Row>
         <Row readOnly={true} label="x509 Certificate">
           <Form.TextArea
@@ -58,8 +48,8 @@ const IdentityForm = ({ state, dispatch, errors}) => {
             }}
             className='identity-form-focused'
             placeholder="x509 Certificate"
-            error={errors.certificate}
-            value={state.certificate}
+            value={state.enrollment.identity.certificate}
+            rows={20}
             onChange={(_, { value }) =>
               handleChange('certificate', value)
             }
@@ -75,13 +65,9 @@ IdentityForm.propTypes = {
     name: PropTypes.string,
     mspid: PropTypes.string,
     roles: PropTypes.string,
-    affiliation: PropTypes.string,
-    identifier: PropTypes.string,
-    certificate: PropTypes.string
+    enrollment: PropTypes.object,
   }),
   dispatch: PropTypes.func,
-  errors: PropTypes.shape(),
-  roles: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default IdentityForm;

@@ -16,83 +16,26 @@ import Actions from './Actions';
 
 import { AuthContext } from '../context/auth';
 
-const init = state => {
-  return INPUT_FIELDS.IDENTITY.reduce(
-    (prev, curr) => {
-      prev[curr] = state[curr];
-      if (dates.includes(curr)) {
-        if (!state[curr]) {
-          prev[curr] = new Date();
-        } else {
-          prev[curr] = new Date(state[curr]);
-        }
-      } else {
-        prev[curr] = state[curr];
-      }
-      return prev;
-    },
-    { touched: {} }
-  );
-};
-
-const IdentityDetail = ({ data, guaranteeType }) => {
+const IdentityDetail = ({ data }) => {
   const contextRef = createRef();
 
   const { user } = useContext(AuthContext);
-  const roles = user.user_info.roles;
+  const groups = user.user_info.groups;
 
-  const [formState, dispatch] = useReducer(form, init(data));
-  const validationErrors = validateForm(formState);
-
-  const [actionStatus, setActionStatus] = useState({});
+  const [formState, dispatch] = useReducer(form, data);
 
   return (
     <div ref={contextRef}>
       <>
-        <Sticky context={contextRef}>
-          <div
-            className="no-print"
-            style={{
-              backgroundColor: 'white',
-              marginBottom: 20
-            }}
-          >
-            <Actions
-              data={data}
-              actionStatus={actionStatus}
-              setActionStatus={setActionStatus}
-              formState={formState}
-              errors={validationErrors}
-              guaranteeType={guaranteeType}
-            />
-          </div>
-        </Sticky>
         <div
           style={{
             marginTop: 20
           }}
         >
-          <div
-            style={{
-              marginBottom: 25
-            }}
-          >
-            {actionStatus.error ? (
-              <Message color="red">{actionStatus.error}</Message>
-            ) : (
-              <></>
-            )}
-            {actionStatus.success ? (
-              <Message color="green">{actionStatus.success}</Message>
-            ) : (
-              <></>
-            )}
-          </div>
           <IdentityForm
-            roles={roles}
+            groups={groups}
             state={formState}
             dispatch={dispatch}
-            errors={validationErrors}
           />
         </div>
       </>
@@ -103,7 +46,6 @@ const IdentityDetail = ({ data, guaranteeType }) => {
 const GuaranteeDetailWrapper = ({ match }) => {
   const useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
-  const guaranteeType = match.path.slice(1).replace('/:id', '');
 
   const { params } = match;
   const { id } = params;
@@ -122,7 +64,7 @@ const GuaranteeDetailWrapper = ({ match }) => {
     return <Message color="red">{data.error || 'Not found'}</Message>;
   }
 
-  return <IdentityDetail data={data.data} guaranteeType={guaranteeType} />;
+  return <IdentityDetail data={data.data} />;
 };
 
 export default withRouter(props => <GuaranteeDetailWrapper {...props} />);

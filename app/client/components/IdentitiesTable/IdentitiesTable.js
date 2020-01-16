@@ -77,23 +77,32 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                                     flexDirection: 'row'
                                 }}
                             >
-                                {BUTTONS.map((button, idx) => (
-                                    <Popup
-                                        key={idx}
-                                        content={button.label}
-                                        trigger={
-                                            <Button
-                                                as={Link}
-                                                to={
-                                                    i.status === 4 || i.status === 9
-                                                        ? `/${type}/${i._id}?type=cc&issuer=${i.issuer}&receiver=${i.receiver.id}`
-                                                        : `/${type}/${i._id}`
-                                                }
-                                                icon={button.icon}
-                                            />
+                                {BUTTONS
+                                    .filter(j => {
+                                        // workaround for Confirm status and draft-rollback-to-editing button
+                                        if (j.type === 'draft-rollback-to-editing') {
+                                            if (userRoles.includes('Confirm') && ![1, 6].includes(j.status)) {
+                                                return false;
+                                            }
+                                            return true;
                                         }
-                                    />
-                                ))}
+                                        return true;
+                                    })
+                                    .map((button, idx) => (
+                                        <Popup
+                                            key={idx}
+                                            content={button.label}
+                                            trigger={
+                                                <Button
+                                                    as={Link}
+                                                    to={
+                                                        `/${type}/${i.enrollment.signingIdentity}`
+                                                    }
+                                                    icon={button.icon}
+                                                />
+                                            }
+                                        />
+                                    ))}
                             </div>
                         </Table.Cell>
                     </Table.Row>
