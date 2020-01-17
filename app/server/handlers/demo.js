@@ -67,6 +67,7 @@ const methods = [
                     for (label of fullListIdentities) {
                         let name = path.basename(label);
                         let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
+                        identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
                         identities.push(identity);
                     }
                 } catch (e) {
@@ -107,6 +108,7 @@ const methods = [
                         let name = path.basename(label);
                         let identity = JSON.parse(fs.readFileSync(path.join(label, name), 'utf8'));
                         if (identity.enrollment.signingIdentity === id) {
+                            identity.decodedCertificate = x509.parseCert(identity.enrollment.identity.certificate);
                             result = identity;
                         }
                     }
@@ -115,6 +117,21 @@ const methods = [
                 }
             }
             return result;
+        }
+    },
+    {
+        method: 'post',
+        path: '/api/decodex509',
+        handler: async req => {
+            const {certificate} = req.body;
+            let decodedCert;
+            try {
+                decodedCert = x509.parseCert(certificate);
+            } catch (e) {
+                throw e;
+
+            }
+            return decodedCert;
         }
     },
     {

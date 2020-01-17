@@ -1,11 +1,13 @@
 /* eslint camelcase: 0 */
 
-import React from 'react';
+import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
-import {Form, Grid} from 'semantic-ui-react';
+import {Form, Grid, Button, Popup} from 'semantic-ui-react';
 import JSONPretty from 'react-json-pretty';
 import 'react-json-pretty/themes/monikai.css';
-import 'x509';
+import {post, get} from '../../utils/api';
+
+import {AuthContext} from '../../context/auth';
 
 const Row = ({label, children, readOnly}) => (
     <Grid.Row className={readOnly ? 'readOnly' : ''} columns={2}>
@@ -25,6 +27,13 @@ const IdentityForm = ({state, dispatch, errors}) => {
             value
         });
     };
+
+    const {logout, user} = useContext(AuthContext);
+
+    const [req, setReq] = useState({
+        loading: false,
+        error: false
+    });
 
     return (
         <Form>
@@ -58,10 +67,33 @@ const IdentityForm = ({state, dispatch, errors}) => {
                         }
                     />
                 </Row>
+                <Row>
+
+                    <Button
+                        loading={req.loading}
+                        primary
+                        onClick={async () => {
+                            try {
+                                setReq({...req, loading: true});
+                                const res = await post('/api/decodex509', {certificate: state.enrollment.identity.certificate});
+                                const data = await res.json();
+                                if (!data.ok && data.error) {
+                                    throw new Error(data.error);
+                                }
+                                setReq({...req, loading: false});
+                            } catch (e) {
+                                console.error(e);
+                                setReq({error: e.message, loading: false});
+                            }
+                        }}
+                    >
+                        Decode
+                    </Button>
+
+                </Row>
                 <Row readOnly={true} label="Decoded x509 Certificate">
-                    <JSONPretty id="json-pretty" style={{"background-color": "#1c2833"}}
-                                data={x509.parseCert(state.enrollment.identity.certificate)} mainStyle="color: #ffffff"
-                                valueStyle={"color: #f5b041"} keyStyle="color: #77eef5"></JSONPretty>
+                    <JSONPretty id="json-pretty" data={state.decodedCertificate}
+                    ></JSONPretty>
                 </Row>
             </Grid>
         </Form>
@@ -73,7 +105,8 @@ IdentityForm.propTypes = {
         name: PropTypes.string,
         mspid: PropTypes.string,
         roles: PropTypes.string,
-        enrollment: PropTypes.object
+        enrollment: PropTypes.object,
+        decodedCertificate: PropTypes.object
     }),
     dispatch: PropTypes.func,
 };
