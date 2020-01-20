@@ -26,10 +26,6 @@ const BUTTONS = [
     }
 ];
 
-import {
-    COMMON_ACTIONS
-} from '../../constants';
-
 const IdentitiesTable = ({data, userGroups, type}) => {
     const [sortBy, setSortBy] = useState({
         column: '',

@@ -18,52 +18,5 @@ export const sort = (field, direction, data) => {
     }
   }
 
-  if (field === 'receiver') {
-    sorted.sort((i, j) => {
-      const I = i[field].label.toLowerCase();
-      const J = j[field].label.toLowerCase();
-      if (direction === 'ascending') {
-        if (I < J) {
-          return -1;
-        }
-        if (I > J) {
-          return 1;
-        }
-      } else {
-        if (I > J) {
-          return -1;
-        }
-        if (I < J) {
-          return 1;
-        }
-      }
-
-      return 0;
-    });
-  }
-
-  if (field === 'beneficiary' || field === 'issuer') {
-    sorted.sort((i, j) => {
-      const I = i[field].toLowerCase();
-      const J = j[field].toLowerCase();
-      if (direction === 'ascending') {
-        if (I < J) {
-          return -1;
-        }
-        if (I > J) {
-          return 1;
-        }
-      } else {
-        if (I > J) {
-          return -1;
-        }
-        if (I < J) {
-          return 1;
-        }
-      }
-
-      return 0;
-    });
-  }
   return sorted;
 };

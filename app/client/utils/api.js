@@ -42,20 +42,3 @@ export const put = (url, data) => request(url, 'put', data);
 export const remove = (url, data) => request(url, 'delete', data);
 
 export const get = url => request(url, 'get');
-
-export const updateGuarantee = async (action, payload) => {
-  try {
-    const [err, result] = await post(`/api/guarantee/${action}`, payload).then(
-      async res => [!res.ok, await res.json()]
-    );
-
-    if (err) {
-      return [result.error];
-    }
-
-    return [null, 'Сохранено успешно'];
-  } catch (e) {
-    console.error(e);
-    return [e.message];
-  }
-};

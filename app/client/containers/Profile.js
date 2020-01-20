@@ -5,8 +5,7 @@ import {withRouter} from 'react-router-dom';
 import {AuthContext} from '../context/auth';
 import {form} from '../reducers/form';
 import {INPUT_FIELDS} from '../constants';
-import {post, get} from '../utils/api';
-import {useGet} from "../hooks";
+import {post} from '../utils/api';
 
 const initialState = INPUT_FIELDS.CHANGE_PASSWORD.reduce(
     (prev, curr) => {
@@ -27,10 +26,6 @@ const Profile = ({history}) => {
         error: false
     });
 
-    const [identityDetail] = useGet(
-        `/api/identity`
-    );
-
     const [activeTab, setActiveTab] = useState('password');
 
     const {logout, user} = useContext(AuthContext);
@@ -45,13 +40,6 @@ const Profile = ({history}) => {
                             active={activeTab === 'password'}
                             onClick={() => {
                                 setActiveTab('password');
-                            }}
-                        />
-                        <Menu.Item
-                            name="Identity Info"
-                            active={activeTab === 'identity'}
-                            onClick={() => {
-                                setActiveTab('identity');
                             }}
                         />
                     </Menu>
@@ -116,71 +104,6 @@ const Profile = ({history}) => {
                                     Change password
                                 </Button>
                             </Form>
-                        </Segment>
-                    ) : (
-                        <></>
-                    )}
-                    {activeTab === 'identity' ? (
-                        <Segment>
-                            <div>
-                                <Form>
-                                    {INPUT_FIELDS.IDENTITY.map((input, j) => (
-                                        <Form.Group widths={'equal'} key={j}>
-                                            <Form.Input
-                                                {...input.props}
-                                                error={errors[input.field]}
-                                                value={formState[input.field]}
-                                                onChange={(_, {value}) =>
-                                                    dispatch({
-                                                        type: 'CHANGE_TEXT_INPUT',
-                                                        field: input.field,
-                                                        value
-                                                    })
-                                                }
-                                            />
-                                        </Form.Group>
-                                    ))}
-
-                                    {req.error ? (
-                                        <Message color="red">
-                                            <p>{req.error}</p>
-                                        </Message>
-                                    ) : (
-                                        <></>
-                                    )}
-                                    <Button
-                                        loading={req.loading}
-                                        primary
-                                        onClick={async () => {
-                                            try {
-                                                setReq({...req, loading: true});
-                                                const res = await post('/api/changePassword', formState);
-                                                const data = await res.json();
-                                                if (!data.ok && data.error) {
-                                                    throw new Error(data.error);
-                                                }
-                                                setReq({...req, loading: false});
-                                                setTimeout(async () => {
-                                                    await logout();
-                                                    history.push('/');
-                                                }, 250);
-                                            } catch (e) {
-                                                console.error(e);
-                                                setReq({error: e.message, loading: false});
-                                            }
-                                        }}
-                                    >
-                                        Reenroll
-                                    </Button>
-                                </Form>
-                            </div>
-                            {req.error ? (
-                                <Message color="red">
-                                    <p>{req.error}</p>
-                                </Message>
-                            ) : (
-                                <></>
-                            )}
                         </Segment>
                     ) : (
                         <></>

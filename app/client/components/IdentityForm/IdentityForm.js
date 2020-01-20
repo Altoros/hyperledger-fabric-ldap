@@ -2,7 +2,7 @@
 
 import React, {useState, useContext} from 'react';
 import PropTypes from 'prop-types';
-import {Form, Grid, Button, Popup} from 'semantic-ui-react';
+import {Form, Grid, Button, Modal, Icon, Header} from 'semantic-ui-react';
 import JSONPretty from 'react-json-pretty';
 import 'react-json-pretty/themes/monikai.css';
 import {post, get} from '../../utils/api';
@@ -68,32 +68,37 @@ const IdentityForm = ({state, dispatch, errors}) => {
                     />
                 </Row>
                 <Row>
-
-                    <Button
-                        loading={req.loading}
-                        primary
-                        onClick={async () => {
-                            try {
-                                setReq({...req, loading: true});
-                                const res = await post('/api/decodex509', {certificate: state.enrollment.identity.certificate});
-                                const data = await res.json();
-                                if (!data.ok && data.error) {
-                                    throw new Error(data.error);
+                    <Modal trigger={
+                        <Button
+                            loading={req.loading}
+                            primary
+                            onClick={async () => {
+                                try {
+                                    setReq({...req, loading: true});
+                                    const res = await post('/api/decodex509', {certificate: state.enrollment.identity.certificate});
+                                    const data = await res.json();
+                                    if (!data.ok && data.error) {
+                                        throw new Error(data.error);
+                                    }
+                                    setReq({...req, loading: false});
+                                } catch (e) {
+                                    console.error(e);
+                                    setReq({error: e.message, loading: false});
                                 }
-                                setReq({...req, loading: false});
-                            } catch (e) {
-                                console.error(e);
-                                setReq({error: e.message, loading: false});
-                            }
-                        }}
-                    >
-                        Decode
-                    </Button>
+                            }}
+                        >
+                            Decode
+                        </Button>
+                    } closeIcon>
+                        <Header icon='info' content='Decoded x509 Certificate'/>
+                        <Modal.Content>
+                            <JSONPretty id="json-pretty" data={state.decodedCertificate}
+                            ></JSONPretty>
+                        </Modal.Content>
+                        <Modal.Actions>
+                        </Modal.Actions>
+                    </Modal>
 
-                </Row>
-                <Row readOnly={true} label="Decoded x509 Certificate">
-                    <JSONPretty id="json-pretty" data={state.decodedCertificate}
-                    ></JSONPretty>
                 </Row>
             </Grid>
         </Form>
