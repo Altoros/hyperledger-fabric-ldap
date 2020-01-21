@@ -6,11 +6,13 @@ const {invoke} = require('../fabric/fabric-invoke');
 const {query} = require('../fabric/fabric-query');
 const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
+const {revoke} = require('../fabric/fabric-revoke-user');
 const {options, profile} = require('../fabric/fabric-tools');
 const {listDirectory, isProduction} = require('../helper');
 const {fakeIdentities, fakeUnits} = require('../fakeData');
 const {Gateway} = require('fabric-network');
 const x509 = require('x509');
+const {decrypt} = require('../tools/encryption');
 
 const {
     ORG = 'example'
@@ -191,6 +193,7 @@ const methods = [
             const {x, id, cn} = req.body;
             const fcn = `move`;
             const args = [x, id, cn];
+            console.log(args);
             const user = req.user.user_info.full_name;
             if (isProduction()) {
                 const result = await invoke(
@@ -234,11 +237,13 @@ const methods = [
     },
     {
         method: 'post',
-        path: '/api/enroll',
+        path: '/api/reenroll',
         handler: async req => {
-            const {username, password, attrs} = req.body;
+            const username = req.user.user_info.full_name;
+            const password = decrypt(req.user.secret);
+
             if (isProduction()) {
-                const result = await enroll(username, password, attrs, true);
+                const result = await enroll(username, password, true);
                 let cert;
                 if (result.success && result.identity && result.enrollment) {
                     cert = result.cert;
@@ -247,6 +252,22 @@ const methods = [
                 return {cert};
             }
             return fakeIdentities[0].enrollment.identity.certificate
+        }
+    },
+    {
+        method: 'post',
+        path: '/api/revoke',
+        handler: async req => {
+            const {enrollmentId} = req.body;
+            const registrar = req.user.user_info.full_name;
+            if (isProduction()) {
+                const result = await revoke(enrollmentId, registrar);
+                if (result.success) {
+                    return result.message
+                }
+                throw new Error(result.message);
+            }
+            return "Ok"
         }
     },
     {

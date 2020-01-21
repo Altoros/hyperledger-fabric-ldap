@@ -14,7 +14,7 @@ const {
     DOMAIN = 'example.com'
 } = process.env;
 
-const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs, reenroll = false) => {
+const enroll = async (user = 'admin', userpw = 'adminpw', reenroll = false, attrs = defaultAttrs) => {
     try {
         const connectionProfile = await profile();
         const appWallet = await wallet();

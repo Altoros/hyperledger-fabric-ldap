@@ -30,7 +30,7 @@ export const INPUT_FIELDS = {
 export const COMMON_ACTIONS = [
     {
         label: 'Reenroll certificate',
-        type: 'enroll',
+        type: 'reenroll',
         icon: 'sync'
     },
     {
