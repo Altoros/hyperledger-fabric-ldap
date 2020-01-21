@@ -202,7 +202,8 @@ ldap:
       "uidNumber",
       "memberOf",
       "minValue",
-      "maxValue"
+      "maxValue",
+      "initValue"
     ]
 
     # The 'converters' section is used to convert an LDAP entry to the value of

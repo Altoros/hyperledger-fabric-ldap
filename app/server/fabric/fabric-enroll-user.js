@@ -14,7 +14,7 @@ const {
     DOMAIN = 'example.com'
 } = process.env;
 
-const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs, reenroll =false) => {
+const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs, reenroll = false) => {
     try {
         const connectionProfile = await profile();
         const appWallet = await wallet();
@@ -35,7 +35,7 @@ const enroll = async (user = 'admin', userpw = 'adminpw', attrs = defaultAttrs, 
             ca = new FabricCAServices(caInfo.url, {trustedRoots: caTLSCACerts, verify: false}, caInfo.caName);
             enrollment = await ca.enroll({enrollmentID: user, enrollmentSecret: userpw, attr_reqs: attrs});
             message = `Successfully enrolled user "${user}" and imported it into the wallet`;
-        } else if(reenroll) {
+        } else if (reenroll) {
             const connectionOptions = await options(user);
             // Connect to gateway using application specified parameters
             const gateway = new Gateway();

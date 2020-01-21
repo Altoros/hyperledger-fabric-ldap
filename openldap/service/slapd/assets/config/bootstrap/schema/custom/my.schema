@@ -16,8 +16,15 @@ attributetype ( demoAttrs:2
     SUBSTR caseIgnoreSubstringsMatch
     SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{255} )
 
+attributetype ( demoAttrs:3
+    NAME 'initValue'
+    DESC 'initValue'
+    EQUALITY caseIgnoreMatch
+    SUBSTR caseIgnoreSubstringsMatch
+    SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{255} )
+
 objectclass ( demoOCs:1
 	NAME 'demoValues'
 	SUP ( top ) AUXILIARY
 	DESC 'demoValues'
-	MAY ( minValue $ maxValue ) )
+	MAY ( minValue $ maxValue $ initValue ) )

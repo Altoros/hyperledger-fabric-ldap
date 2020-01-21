@@ -11,6 +11,7 @@ uid: user.1
 uidNumber: 10001
 minValue: 5
 maxValue: 10
+initValue: 100
 givenName: user.1
 loginShell: /bin/bash
 mail: user.1@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
@@ -33,6 +34,7 @@ uid: user.2
 uidNumber: 10002
 minValue: 5
 maxValue: 10
+initValue: 100
 givenName: user.2
 loginShell: /bin/bash
 mail: user.2@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
@@ -55,6 +57,7 @@ uid: user.3
 uidNumber: 10003
 minValue: 5
 maxValue: 10
+initValue: 100
 givenName: user.3
 loginShell: /bin/bash
 mail: user.3@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
@@ -77,6 +80,7 @@ uid: user.4
 uidNumber: 10004
 minValue: 5
 maxValue: 10
+initValue: 100
 givenName: user.4
 loginShell: /bin/bash
 mail: user.4@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
@@ -99,6 +103,7 @@ uid: user.5
 uidNumber: 10005
 minValue: 5
 maxValue: 10
+initValue: 100
 givenName: user.5
 loginShell: /bin/bash
 mail: user.5@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}

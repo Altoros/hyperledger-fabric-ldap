@@ -43,7 +43,8 @@ const defaultAttrs = [
     "uidNumber",
     "memberOf",
     "minValue",
-    "maxValue"
+    "maxValue",
+    "initValue"
 ];
 
 const checkJWT = async ({cookies, hostname}, res) => {

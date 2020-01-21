@@ -19,11 +19,32 @@ const {
 const methods = [
     {
         method: 'get',
-        path: '/api/query/:id',
+        path: '/api/get/:id/:cn',
         handler: async req => {
-            const {id} = req.params;
-            const fcn = `query`;
-            const args = [id];
+            const {id, cn} = req.params;
+            const fcn = `get`;
+            const args = [id, cn];
+            const user = req.user.user_info.full_name;
+            const result = await query(
+                DEFAULT_HLF_CHANNEL,
+                DEFAULT_HLF_CHAINCODE,
+                fcn,
+                args,
+                user
+            );
+
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+            return JSON.parse(result.message);
+        }
+    },
+    {
+        method: 'get',
+        path: '/api/list',
+        handler: async req => {
+            const fcn = `list`;
+            const args = [];
             const user = req.user.user_info.full_name;
             const result = await query(
                 DEFAULT_HLF_CHANNEL,
@@ -136,9 +157,52 @@ const methods = [
     },
     {
         method: 'post',
-        path: '/api/invoke',
+        path: '/api/set',
         handler: async req => {
-            const {fcn, args} = req.body;
+            const fcn = `set`;
+            const args = [];
+            const user = req.user.user_info.full_name;
+            const result = await invoke(
+                DEFAULT_HLF_CHANNEL,
+                DEFAULT_HLF_CHAINCODE,
+                fcn,
+                args,
+                user
+            );
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+            return result.message;
+        }
+    },
+    {
+        method: 'post',
+        path: '/api/move',
+        handler: async req => {
+            const {x, id, cn} = req.body;
+            const fcn = `move`;
+            const args = [x, id, cn];
+            const user = req.user.user_info.full_name;
+            const result = await invoke(
+                DEFAULT_HLF_CHANNEL,
+                DEFAULT_HLF_CHAINCODE,
+                fcn,
+                args,
+                user
+            );
+            if (!result.success) {
+                throw new Error(result.message);
+            }
+            return result.message;
+        }
+    },
+    {
+        method: 'post',
+        path: '/api/delete',
+        handler: async req => {
+            const {id, cn} = req.body;
+            const fcn = `delete`;
+            const args = [id, cn];
             const user = req.user.user_info.full_name;
             const result = await invoke(
                 DEFAULT_HLF_CHANNEL,

@@ -82,7 +82,7 @@ docker exec \
     -n ${CHAINCODE_NAME} \
     -l "$CC_RUNTIME_LANGUAGE" \
     -v ${CHAINCODE_VERSION} \
-    -c '{"Args":["init","a","200","b","200"]}' \
+    -c '{"Args":[""]}' \
     -P "AND('Org1MSP.member','Org2MSP.member')" \
     --tls \
     --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
@@ -102,7 +102,7 @@ docker exec \
     -o orderer.example.com:7050 \
     -C ${CHANNEL_NAME} \
     -n ${CHAINCODE_NAME} \
-    -c '{"Args":["invoke","a","b","10"]}' \
+    -c '{"Args":["set"]}' \
     --waitForEvent \
     --tls \
     --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
@@ -112,3 +112,38 @@ docker exec \
     --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE}
 set +x
 
+docker exec \
+  -e CORE_PEER_LOCALMSPID=Org1MSP \
+  -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+  cli \
+  peer chaincode invoke \
+    -o orderer.example.com:7050 \
+    -C ${CHANNEL_NAME} \
+    -n ${CHAINCODE_NAME} \
+    -c '{"Args":["get","Org1MSP","Admin@org1.example.com"]}' \
+    --waitForEvent \
+    --tls \
+    --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
+    --peerAddresses peer0.org1.example.com:7051 \
+    --peerAddresses peer0.org2.example.com:9051 \
+    --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE} \
+    --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE}
+set +x
+
+docker exec \
+  -e CORE_PEER_LOCALMSPID=Org1MSP \
+  -e CORE_PEER_MSPCONFIGPATH=${ORG1_MSPCONFIGPATH} \
+  cli \
+  peer chaincode invoke \
+    -o orderer.example.com:7050 \
+    -C ${CHANNEL_NAME} \
+    -n ${CHAINCODE_NAME} \
+    -c '{"Args":["delete","Org1MSP","Admin@org1.example.com"]}' \
+    --waitForEvent \
+    --tls \
+    --cafile ${ORDERER_TLS_ROOTCERT_FILE} \
+    --peerAddresses peer0.org1.example.com:7051 \
+    --peerAddresses peer0.org2.example.com:9051 \
+    --tlsRootCertFiles ${ORG1_TLS_ROOTCERT_FILE} \
+    --tlsRootCertFiles ${ORG2_TLS_ROOTCERT_FILE}
+set +x
