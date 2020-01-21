@@ -8,7 +8,7 @@ const {enroll} = require('../fabric/fabric-enroll-user');
 const {register} = require('../fabric/fabric-register-user');
 const {options, profile} = require('../fabric/fabric-tools');
 const {listDirectory, isProduction} = require('../helper');
-const {fakeIdentities} = require('../fakeData');
+const {fakeIdentities, fakeUnits} = require('../fakeData');
 const {Gateway} = require('fabric-network');
 const x509 = require('x509');
 
@@ -46,18 +46,21 @@ const methods = [
             const fcn = `list`;
             const args = [];
             const user = req.user.user_info.full_name;
-            const result = await query(
-                DEFAULT_HLF_CHANNEL,
-                DEFAULT_HLF_CHAINCODE,
-                fcn,
-                args,
-                user
-            );
+            if (isProduction()) {
+                const result = await query(
+                    DEFAULT_HLF_CHANNEL,
+                    DEFAULT_HLF_CHAINCODE,
+                    fcn,
+                    args,
+                    user
+                );
 
-            if (!result.success) {
-                throw new Error(result.message);
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                return JSON.parse(result.message);
             }
-            return JSON.parse(result.message);
+            return fakeUnits[0]
         }
     },
     {
@@ -147,7 +150,10 @@ const methods = [
             const {certificate} = req.body;
             let decodedCert;
             try {
-                decodedCert = x509.parseCert(certificate);
+                decodedCert = x509.parseCert(fakeIdentities[0].enrollment.identity.certificate);
+                if (isProduction()) {
+                    decodedCert = x509.parseCert(certificate);
+                }
             } catch (e) {
                 throw e;
 
@@ -162,17 +168,20 @@ const methods = [
             const fcn = `set`;
             const args = [];
             const user = req.user.user_info.full_name;
-            const result = await invoke(
-                DEFAULT_HLF_CHANNEL,
-                DEFAULT_HLF_CHAINCODE,
-                fcn,
-                args,
-                user
-            );
-            if (!result.success) {
-                throw new Error(result.message);
+            if (isProduction()) {
+                const result = await invoke(
+                    DEFAULT_HLF_CHANNEL,
+                    DEFAULT_HLF_CHAINCODE,
+                    fcn,
+                    args,
+                    user
+                );
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                return result.message;
             }
-            return result.message;
+            return "Ok"
         }
     },
     {
@@ -183,17 +192,20 @@ const methods = [
             const fcn = `move`;
             const args = [x, id, cn];
             const user = req.user.user_info.full_name;
-            const result = await invoke(
-                DEFAULT_HLF_CHANNEL,
-                DEFAULT_HLF_CHAINCODE,
-                fcn,
-                args,
-                user
-            );
-            if (!result.success) {
-                throw new Error(result.message);
+            if (isProduction()) {
+                const result = await invoke(
+                    DEFAULT_HLF_CHANNEL,
+                    DEFAULT_HLF_CHAINCODE,
+                    fcn,
+                    args,
+                    user
+                );
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                return result.message;
             }
-            return result.message;
+            return "Ok"
         }
     },
     {
@@ -204,17 +216,20 @@ const methods = [
             const fcn = `delete`;
             const args = [id, cn];
             const user = req.user.user_info.full_name;
-            const result = await invoke(
-                DEFAULT_HLF_CHANNEL,
-                DEFAULT_HLF_CHAINCODE,
-                fcn,
-                args,
-                user
-            );
-            if (!result.success) {
-                throw new Error(result.message);
+            if (isProduction()) {
+                const result = await invoke(
+                    DEFAULT_HLF_CHANNEL,
+                    DEFAULT_HLF_CHAINCODE,
+                    fcn,
+                    args,
+                    user
+                );
+                if (!result.success) {
+                    throw new Error(result.message);
+                }
+                return result.message;
             }
-            return result.message;
+            return "Ok"
         }
     },
     {
@@ -222,13 +237,16 @@ const methods = [
         path: '/api/enroll',
         handler: async req => {
             const {username, password, attrs} = req.body;
-            const result = await enroll(username, password, attrs, true);
-            let cert;
-            if (result.success && result.identity && result.enrollment) {
-                cert = result.cert;
-            } else if (!result.success) throw new Error(result.message);
+            if (isProduction()) {
+                const result = await enroll(username, password, attrs, true);
+                let cert;
+                if (result.success && result.identity && result.enrollment) {
+                    cert = result.cert;
+                } else if (!result.success) throw new Error(result.message);
 
-            return {cert};
+                return {cert};
+            }
+            return fakeIdentities[0].enrollment.identity.certificate
         }
     },
     {
@@ -242,12 +260,15 @@ const methods = [
                 enrollmentID: username,
                 role: 'client'
             };
-            let cert;
-            const result = await register(registrar, username, password, attrs);
-            if (result.success && result.identity && result.cert) {
-                cert = result.cert;
-            } else if (!result.success) throw new Error(result.message);
-            return {cert};
+            if (isProduction()) {
+                let cert;
+                const result = await register(registrar, username, password, attrs);
+                if (result.success && result.identity && result.cert) {
+                    cert = result.cert;
+                } else if (!result.success) throw new Error(result.message);
+                return {cert};
+            }
+            return fakeIdentities[0].enrollment.identity.certificate
         }
     }
 ];

@@ -45,4 +45,14 @@ const fakeIdentities = [
     }
 ];
 
-module.exports = {fakeIdentities};
+const fakeUnits = [
+    {
+        "key": [
+            "Org1MSP",
+            "user.1"
+        ],
+        "value": 100
+    }
+];
+
+module.exports = {fakeIdentities, fakeUnits};
