@@ -60,7 +60,7 @@ const methods = [
                 }
                 return JSON.parse(result.message);
             }
-            return fakeUnits[0]
+            return fakeUnits
         }
     },
     {

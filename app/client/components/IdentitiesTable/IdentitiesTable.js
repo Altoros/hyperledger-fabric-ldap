@@ -5,31 +5,24 @@ import {Button, Table, Icon, Popup} from 'semantic-ui-react';
 
 const BUTTONS = [
     {
-        label: 'View',
+        label: 'View details',
         type: 'identities',
-        icon: 'info'
-    },
-    {
-        label: 'Reenroll',
-        type: 'enroll',
-        icon: 'file alternate outline'
-    },
-    {
-        label: 'Revoke',
-        type: 'revoke',
-        icon: 'file outline'
-    },
-    {
-        label: 'Send',
-        type: 'invoke',
-        icon: 'send'
+        icon: 'eye'
     }
 ];
 
-const IdentitiesTable = ({data, userGroups, type}) => {
+import {COMMON_ACTIONS} from '../../constants'
+import { post, get } from '../../utils/api';
+
+const IdentitiesTable = ({identities, assets, userGroups, type}) => {
     const [sortBy, setSortBy] = useState({
         column: '',
         direction: 'descending'
+    });
+
+    const [req, setReq] = useState({
+        loading: false,
+        error: false
     });
 
     return (
@@ -51,17 +44,29 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                     >
                         Identifier
                     </Table.HeaderCell>
+                    <Table.HeaderCell
+                        sorted={sortBy.column === 'assets' ? sortBy.direction : null}
+                    >
+                        Assets
+                    </Table.HeaderCell>
                     <Table.HeaderCell>Actions</Table.HeaderCell>
                 </Table.Row>
             </Table.Header>
 
             <Table.Body>
-                {data &&
-                data.map(i => (
+                {identities &&
+                identities.map(i => (
                     <Table.Row key={i.name}>
                         <Table.Cell>{i.name}</Table.Cell>
                         <Table.Cell>{i.mspid}</Table.Cell>
                         <Table.Cell>{i.enrollment.signingIdentity}</Table.Cell>
+                        <Table.Cell>{
+                            assets && assets
+                                .filter(j => {
+                                    return j.key.includes(i.name) && j.key.includes(i.mspid)
+                                })
+                                .map(j => j.value)
+                        }</Table.Cell>
                         <Table.Cell
                             style={{
                                 width: 150
@@ -73,7 +78,7 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                                     flexDirection: 'row'
                                 }}
                             >
-                                {BUTTONS
+                                {BUTTONS.concat(COMMON_ACTIONS)
                                     .filter(j => {
                                         // workaround for Confirm status and draft-rollback-to-editing button
                                         if (j.type === 'draft-rollback-to-editing') {
@@ -90,10 +95,30 @@ const IdentitiesTable = ({data, userGroups, type}) => {
                                             content={button.label}
                                             trigger={
                                                 <Button
+                                                    loading={req.loading}
                                                     as={Link}
                                                     to={
-                                                        `/${type}/${i.enrollment.signingIdentity}`
+                                                        button.type === 'identities'
+                                                            ? `/${type}/${i.enrollment.signingIdentity}`
+                                                            : `/${type}`
                                                     }
+                                                    onClick={async () => {
+                                                        if (button.type === 'set') {
+                                                            try {
+                                                                setReq({...req, loading: true});
+                                                                const res = await post(`/api/${button.type}`, []);
+                                                                const data = await res.json();
+                                                                if (!data.ok && data.error) {
+                                                                    throw new Error(data.error);
+                                                                }
+                                                                setReq({...req, loading: false});
+                                                            } catch (e) {
+                                                                console.error(e);
+                                                                setReq({error: e.message, loading: false});
+                                                            }
+                                                        }
+
+                                                    }}
                                                     icon={button.icon}
                                                 />
                                             }
@@ -108,13 +133,10 @@ const IdentitiesTable = ({data, userGroups, type}) => {
     );
 };
 
-const guaranteeShape = PropTypes.shape({
-    _id: PropTypes.string
-});
-
 IdentitiesTable.propTypes = {
     type: PropTypes.string,
-    data: PropTypes.arrayOf(guaranteeShape),
+    identities: PropTypes.arrayOf(PropTypes.object),
+    assets: PropTypes.arrayOf(PropTypes.object),
     userGroups: PropTypes.arrayOf(PropTypes.string)
 };
 

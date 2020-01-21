@@ -1,8 +1,8 @@
 /* eslint camelcase: 0 */
 
-import React, { useState, useReducer, useContext, createRef } from 'react';
+import React, { useReducer, useContext, createRef } from 'react';
 import { withRouter, useLocation } from 'react-router-dom';
-import { Message, Sticky } from 'semantic-ui-react';
+import { Message } from 'semantic-ui-react';
 
 import { useGet } from '../hooks';
 
@@ -40,7 +40,7 @@ const IdentityDetail = ({ data }) => {
   );
 };
 
-const GuaranteeDetailWrapper = ({ match }) => {
+const IdentityDetailWrapper = ({ match }) => {
   const useQuery = () => new URLSearchParams(useLocation().search);
   const query = useQuery();
 
@@ -64,4 +64,4 @@ const GuaranteeDetailWrapper = ({ match }) => {
   return <IdentityDetail data={data.data} />;
 };
 
-export default withRouter(props => <GuaranteeDetailWrapper {...props} />);
+export default withRouter(props => <IdentityDetailWrapper {...props} />);

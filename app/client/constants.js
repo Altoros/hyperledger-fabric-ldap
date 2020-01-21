@@ -26,3 +26,26 @@ export const INPUT_FIELDS = {
         }
     ]
 };
+
+export const COMMON_ACTIONS = [
+    {
+        label: 'Reenroll certificate',
+        type: 'enroll',
+        icon: 'sync'
+    },
+    {
+        label: 'Revoke certificate',
+        type: 'revoke',
+        icon: 'undo'
+    },
+    {
+        label: 'Move assets',
+        type: 'move',
+        icon: 'credit card'
+    },
+    {
+        label: 'Set assets',
+        type: 'set',
+        icon: 'plus'
+    }
+];
