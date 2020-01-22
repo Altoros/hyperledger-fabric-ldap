@@ -114,7 +114,7 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                                     break
                                                                 }
                                                                 case 'revoke': {
-                                                                    args.enrollmentId = i.enrollment.signingIdentity;
+                                                                    args.enrollmentId = i.name;
                                                                     break
                                                                 }
                                                                 default:

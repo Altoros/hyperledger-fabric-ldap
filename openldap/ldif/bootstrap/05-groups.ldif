@@ -1,71 +1,71 @@
 dn: cn=Revoker,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Revoker
 description: All users with revocation authorization
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=Gencrl,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Gencrl
 description: All users with gencrl authorization
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=Client,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Client
 description: All hyperledeger fabric clients
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=Peer,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Peer
 description: All hyperledeger fabric peers
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=User,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: User
 description: All hyperledeger fabric users
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=App,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: App
 description: All hyperledeger fabric apps
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.1,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.2,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=Auditor,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Auditor
 description: All hyperledeger fabric auditors
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.3,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.4,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
 
 dn: cn=Validator,ou=groups,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-objectClass: groupOfNames
+objectClass: groupOfUniqueNames
 cn: Validator
 description: All hyperledeger fabric validators
-member: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
-member: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=admin,dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+uniqueMember: uid=user.5,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}

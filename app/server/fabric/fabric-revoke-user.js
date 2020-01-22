@@ -10,7 +10,7 @@ const {
     MSPID,
 } = process.env;
 
-const revoke = async (enrollmentId, enrollmentId) => {
+const revoke = async (enrollmentId, registrar) => {
     try {
         const connectionOptions = await options(registrar);
         const connectionProfile = await profile();

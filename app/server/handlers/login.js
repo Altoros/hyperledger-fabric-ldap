@@ -30,8 +30,8 @@ const userLdapInfo = (userId, password) =>
     new Promise((resolve, reject) => {
         const ldapClient = ldap.createClient(ldapConfig);
         ldapClient.bind(
-            `${ldapConfig.adminDn}`,
-            `${ldapConfig.adminPw}`,
+            `uid=${userId},${ldapConfig.bindDn}`,
+            password,
             (err, res) => {
                 if (err) {
                     // @see https://github.com/mcavage/node-ldapjs/blob/7059cf6b8a0b4ff4c566714d97f3cef04f887c3b/test/client.test.js @ 305
@@ -39,7 +39,7 @@ const userLdapInfo = (userId, password) =>
                 }
                 const options = {
                     scope: 'sub',
-                    filter: `(&(objectclass=groupOfNames)(member=uid=${userId},${ldapConfig.bindDn}))`
+                    filter: `(&(objectclass=groupOfUniqueNames)(uniqueMember=uid=${userId},${ldapConfig.bindDn}))`
                 };
                 ldapClient.search(ldapConfig.baseDn, options, (err, res) => {
                     if (err) {
@@ -72,6 +72,7 @@ const userLdapInfo = (userId, password) =>
 
 module.exports = async (req, res) => {
     try {
+        let pwdMustChange = false;
         if (isProduction()) {
             await authenticate(req.body.username, req.body.password);
         }
@@ -87,7 +88,7 @@ module.exports = async (req, res) => {
                 full_name: req.body.username,
                 groups: [],
             },
-            force_password_change: false
+            force_password_change: pwdMustChange
         };
         if (isProduction()) {
             let userInfo;
@@ -97,6 +98,7 @@ module.exports = async (req, res) => {
             } catch (e) {
                 tokenMsg.force_password_change = ldapError(e).pwdMustChange;
             }
+
             try {
                 await enroll(req.body.username, req.body.password);
             } catch (e) {
