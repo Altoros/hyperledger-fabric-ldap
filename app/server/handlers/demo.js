@@ -193,7 +193,6 @@ const methods = [
             const {x, id, cn} = req.body;
             const fcn = `move`;
             const args = [x, id, cn];
-            console.log(args);
             const user = req.user.user_info.full_name;
             if (isProduction()) {
                 const result = await invoke(

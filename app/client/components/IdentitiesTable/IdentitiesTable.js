@@ -154,7 +154,6 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                                 default:
                                                                     break
                                                             }
-                                                            console.log(args);
                                                             try {
                                                                 setReq({...req, loading: true});
                                                                 const res = await post(`/api/${button.type}`, {...args});
@@ -163,6 +162,9 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                                     throw new Error(data.error);
                                                                 }
                                                                 setReq({...req, loading: false});
+                                                                setTimeout(async () => {
+                                                                    window.location.reload();
+                                                                }, 250);
                                                             } catch (e) {
                                                                 console.error(e);
                                                                 setReq({error: e.message, loading: false});
