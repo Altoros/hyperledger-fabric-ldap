@@ -24,6 +24,15 @@ export const INPUT_FIELDS = {
                 placeholder: 'Type new password again'
             }
         }
+    ],
+    MOVE: [
+        {
+            field: 'value',
+            props: {
+                type: 'text',
+                placeholder: 'Type value'
+            }
+        }
     ]
 };
 

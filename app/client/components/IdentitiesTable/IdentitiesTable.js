@@ -1,7 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React, {useReducer, useState, useEffect} from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
-import {Button, Table, Modal, Popup, Header, Select} from 'semantic-ui-react';
+import {Button, Table, Modal, Popup, Header, Form, Message} from 'semantic-ui-react';
+import {COMMON_ACTIONS, INPUT_FIELDS} from '../../constants'
+import {post, get} from '../../utils/api';
+import {form} from '../../reducers/form';
 
 const BUTTONS = [
     {
@@ -11,24 +14,24 @@ const BUTTONS = [
     }
 ];
 
-const valueOptions = [
-    {key: '5', value: '5', text: '5'},
-    {key: '10', value: '10', text: '10'},
-    {key: '15', value: '15', text: '15'},
-    {key: '20', value: '20', text: '20'},
-    {key: '25', value: '25', text: '25'},
-    {key: '30', value: '30', text: '30'},
-];
-
-import {COMMON_ACTIONS} from '../../constants'
-import {post, get} from '../../utils/api';
+const initialState = INPUT_FIELDS.MOVE.reduce(
+    (prev, curr) => {
+        prev[curr.field] = '';
+        prev.touched[curr.field] = false;
+        return prev;
+    },
+    {
+        touched: {}
+    }
+);
 
 const IdentitiesTable = ({identities, assets, userGroups, type}) => {
+    const [formState, dispatch] = useReducer(form, initialState);
     const [sortBy, setSortBy] = useState({
         column: '',
         direction: 'descending'
     });
-
+    const errors = {};
     const [req, setReq] = useState({
         loading: false,
         error: false
@@ -54,6 +57,11 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                         Assets
                     </Table.HeaderCell>
                     <Table.HeaderCell
+                        sorted={sortBy.column === 'identity' ? sortBy.direction : null}
+                    >
+                        Identity
+                    </Table.HeaderCell>
+                    <Table.HeaderCell
                         sorted={sortBy.column === 'value' ? sortBy.direction : null}
                     >
                         Value
@@ -75,9 +83,36 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                 })
                                 .map(j => j.value)
                         }</Table.Cell>
-                        <Table.Cell><Select placeholder='Select value'
-                                            options={valueOptions}
-                        /></Table.Cell>
+                        <Table.Cell>{i.enrollment.signingIdentity}</Table.Cell>
+                        <Table.Cell>
+                            <Form>
+                                {INPUT_FIELDS.MOVE.map((input, j) => (
+                                    <Form.Group widths={'equal'} key={j}>
+                                        <Form.Input
+                                            {...input.props}
+                                            className="xInput"
+                                            error={errors[input.field]}
+                                            value={formState[input.field]}
+                                            onChange={(_, {value}) =>
+                                                dispatch({
+                                                    type: 'CHANGE_TEXT_INPUT',
+                                                    field: input.field,
+                                                    value
+                                                })
+                                            }
+                                        />
+                                    </Form.Group>
+                                ))}
+
+                                {req.error ? (
+                                    <Message color="red">
+                                        <p>{req.error}</p>
+                                    </Message>
+                                ) : (
+                                    <></>
+                                )}
+                            </Form>
+                        </Table.Cell>
                         <Table.Cell
                             style={{
                                 width: 150
@@ -97,7 +132,6 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                 trigger={
                                                     <Button
                                                         key={idx}
-                                                        loading={req.loading}
                                                         as={Link}
                                                         to={
                                                             button.type === 'identities'
@@ -108,7 +142,7 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                             let args = [];
                                                             switch (button.type) {
                                                                 case 'move': {
-                                                                    args.x = "10";
+                                                                    args.x = formState.value;
                                                                     args.id = i.mspid;
                                                                     args.cn = i.name;
                                                                     break
@@ -120,6 +154,7 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                                 default:
                                                                     break
                                                             }
+                                                            console.log(args);
                                                             try {
                                                                 setReq({...req, loading: true});
                                                                 const res = await post(`/api/${button.type}`, {...args});
