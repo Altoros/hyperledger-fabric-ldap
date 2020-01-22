@@ -13,4 +13,4 @@ olcAccess: {1}to attrs=userPassword,minValue,maxValue,initValue
 add: olcAccess
 olcAccess: {2}to *
   by self read
-  by dn.base="uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}" read
+  by dn.base="uid=user.6,ou=users,dc=org1,dc=example,dc=com" read

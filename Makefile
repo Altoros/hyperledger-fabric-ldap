@@ -49,7 +49,7 @@ artifacts: ss-certs
 	cd ${FN_PATH} && \
 	echo y | ./byfn.sh generate -c $(CHANNEL_NAME)
 
-up:
+up: generate
 	$(eval $(call build_up_network_options))
 	cd ${FN_PATH} && \
 	echo y | ./byfn.sh ${UP_NETWORK_OPTIONS} && \
@@ -71,7 +71,6 @@ force-clean:
 	rm bootstrap.sh # \
 	rm -rf ss-certs # \
 	sudo rm -rf wallet
-
 
 build-client:
 	./scripts/build-client.sh
@@ -106,3 +105,7 @@ install-cc:
 upgrade-cc:
 	export CHAINCODE_VERSION=${v} && \
 	./scripts/upgrade-demo.sh
+
+add-user:
+	docker exec -ti ldap.org1.example.com /container/service/slapd/add-modify.sh
+	docker exec -ti ldap.org2.example.com /container/service/slapd/add-modify.sh

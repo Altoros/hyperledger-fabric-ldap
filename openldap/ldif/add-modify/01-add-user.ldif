@@ -1,11 +1,11 @@
 # User primary group
-dn: cn=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+dn: cn=user.6,ou=users,dc=org1,dc=example,dc=com
 objectClass: posixGroup
 cn: user.6
 gidNumber: 10006
 
 # User account
-dn: uid=user.6,ou=users,dc={{ ORG_NAME }},dc={{ DOMAIN_NAME }},dc={{ DOMAIN_ZONE }}
+dn: uid=user.6,ou=users,dc=org1,dc=example,dc=com
 objectClass: demoValues
 objectClass: inetOrgPerson
 objectClass: shadowAccount
@@ -13,7 +13,7 @@ objectClass: posixAccount
 cn: user.6
 gidNumber: 10006
 homeDirectory: /home/user.6
-sn: {{ ORG_NAME }}
+sn: org1
 uid: user.6
 uidNumber: 10006
 minValue: 5
@@ -21,9 +21,9 @@ maxValue: 10
 initValue: 100
 givenName: user.6
 loginShell: /bin/bash
-mail: user.6@{{ ORG_NAME }}.{{ DOMAIN_NAME }}.{{ DOMAIN_ZONE }}
-o: {{ ORG_NAME }}
+mail: user.6@org1.example.com
+o: org1
 ou: Confirm
 st: North Carolina
 pwdReset: TRUE
-userPassword: user6pw
+userPassword: xNX9mpO8gPG3

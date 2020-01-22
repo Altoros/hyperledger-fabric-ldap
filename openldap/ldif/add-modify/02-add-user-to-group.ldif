@@ -1,0 +1,14 @@
+dn: cn=Client,ou=groups,dc=example,dc=com
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=user.6,ou=users,dc=org1,dc=example,dc=com
+
+dn: cn=App,ou=groups,dc=example,dc=com
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=user.6,ou=users,dc=org1,dc=example,dc=com
+
+dn: cn=User,ou=groups,dc=example,dc=com
+changetype: modify
+add: uniqueMember
+uniqueMember: uid=user.6,ou=users,dc=org1,dc=example,dc=com
