@@ -1,10 +1,11 @@
-import React, {useReducer, useState, useEffect} from 'react';
+import React, {useReducer, useState, useEffect, useContext} from 'react';
 import PropTypes from 'prop-types';
 import {Link} from 'react-router-dom';
 import {Button, Table, Modal, Popup, Header, Form, Message} from 'semantic-ui-react';
 import {COMMON_ACTIONS, INPUT_FIELDS} from '../../constants'
 import {post, get} from '../../utils/api';
 import {form} from '../../reducers/form';
+import {AuthContext} from "../../context/auth";
 
 const BUTTONS = [
     {
@@ -36,6 +37,8 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
         loading: false,
         error: false
     });
+
+    const {user} = useContext(AuthContext);
 
     return (
         <Table celled selectable sortable>
@@ -92,7 +95,6 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                             {...input.props}
                                             className="xInput"
                                             error={errors[input.field]}
-                                            value={formState[input.field]}
                                             onChange={(_, {value}) =>
                                                 dispatch({
                                                     type: 'CHANGE_TEXT_INPUT',
@@ -175,9 +177,9 @@ const IdentitiesTable = ({identities, assets, userGroups, type}) => {
                                                     />
                                                 }
                                             />
-
                                         )
-                                    )}
+                                    )
+                                }
                             </div>
                         </Table.Cell>
                     </Table.Row>
